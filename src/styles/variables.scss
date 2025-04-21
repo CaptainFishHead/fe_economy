@@ -1,0 +1,72 @@
+// 颜色变量
+$primary-color: #1e40af;
+$secondary-color: #3b82f6;
+$text-primary: #1f2937;
+$text-secondary: #4b5563;
+$bg-light: #f3f4f6;
+$bg-dark: #111827;
+
+// 断点变量
+$break-xs: 375px;
+$break-sm: 640px;
+$break-md: 768px;
+$break-lg: 1024px;
+$break-xl: 1280px;
+$break-2xl: 1536px;
+
+// 渐变色
+$gradient-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+$gradient-dark: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(17, 24, 39, 0.8) 100%);
+$gradient-light: linear-gradient(135deg, rgba(243, 244, 246, 0.95) 0%, rgba(243, 244, 246, 0.8) 100%);
+
+// 玻璃态效果
+$glass-effect: (
+  background: rgba(255, 255, 255, 0.1),
+  backdrop-filter: blur(10px),
+  border: 1px solid rgba(255, 255, 255, 0.2)
+);
+
+// 阴影效果
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-glow: 0 0 20px rgba(59, 130, 246, 0.5);
+
+// 断点映射
+$breakpoints: (
+  'xs': $break-xs,
+  'sm': $break-sm,
+  'md': $break-md,
+  'lg': $break-lg,
+  'xl': $break-xl,
+  '2xl': $break-2xl
+);
+
+// 间距
+$spacing: (
+  'xs': 0.25rem,
+  'sm': 0.5rem,
+  'md': 1rem,
+  'lg': 1.5rem,
+  'xl': 2rem,
+  '2xl': 3rem
+);
+
+// 字体
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+// z-index层级
+$z-layers: (
+  modal: 1000,
+  overlay: 900,
+  dropdown: 800,
+  header: 700,
+  footer: 600
+);
+
+
+
+// 设计稿相关配置
+$design-width: 1920;  // 设计稿宽度（不带单位）
+$min-font-size: 12;   // 最小字体大小（不带单位）
+$max-font-size: 16;   // 最大字体大小（不带单位）

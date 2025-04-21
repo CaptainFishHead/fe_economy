@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'SJchunlian-Regular';
+  src: url('./SJchunlian-Regular.ttf') format('truetype');
+  /* 如果字体文件是 .otf 格式，将上面的 url 和 format 替换为下面的代码 */
+  /* src: url('./fonts/SJchunlian-Regular.otf') format('opentype'); */
+  font-weight: normal;
+  font-style: normal;
+}

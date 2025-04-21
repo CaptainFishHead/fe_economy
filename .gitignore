@@ -1,0 +1,12 @@
+# 忽略图片文件但保留目录结构
+public/images/gallery/*.jpg
+public/images/gallery/*.png
+!public/images/gallery/.gitkeep
+
+# 忽略编译后的资源
+dist
+dist/
+node_modules
+node_modules/
+**/node_modules/
+
