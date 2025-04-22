@@ -102,61 +102,8 @@ onMounted(() => {
 
   // 自动滚动
 
-  // let currentIndex = 0
-  // let autoScrollInterval: NodeJS.Timeout | null = null
-
-  // // 自动滚动到指定元素
-  // const scrollToElement = (index: number) => {
-  //   const target = document.querySelector(elements[index])
-  //   if (target) {
-  //     gsap.to(window, {
-  //       scrollTo: { y: target, autoKill: false },
-  //       duration: 1,
-  //       ease: 'power1.inOut',
-  //     })
-  //   }
-  // }
-
-  // // 开始自动滚动
-  // const startAutoScroll = () => {
-  //   autoScrollInterval = setInterval(() => {
-  //     currentIndex = (currentIndex + 1) % elements.length
-  //     scrollToElement(currentIndex)
-  //   }, 4000) // 每4秒滚动一次
-  // }
-
-  // // 停止自动滚动
-  // const stopAutoScroll = () => {
-  //   if (autoScrollInterval) {
-  //     clearInterval(autoScrollInterval)
-  //     autoScrollInterval = null
-  //   }
-  // }
-
-  // // 初始化滚动触发器
-  // elements.forEach((selector, index) => {
-  //   const element = document.querySelector(selector)
-  //   if (element) {
-  //     ScrollTrigger.create({
-  //       trigger: element,
-  //       start: 'top center',
-  //       end: 'bottom center',
-  //       onEnter: () => (currentIndex = index), // 更新当前索引
-  //     })
-  //   }
-  // })
-
-  // // 鼠标悬浮暂停，移开继续
-  // const container = document.querySelector('.container')
-  // if (container) {
-  //   container.addEventListener('mouseenter', stopAutoScroll)
-  //   container.addEventListener('mouseleave', startAutoScroll)
-  // }
-  // startAutoScroll()
-  //  ======================================
   let currentIndex = 0;
   let autoScrollInterval: NodeJS.Timeout | null = null
-
   // 自动滚动到指定元素
   const scrollToElement = (index: number) => {
     const target = document.querySelector(elements[index]);
@@ -207,9 +154,8 @@ onMounted(() => {
     container.addEventListener('mouseenter', stopAutoScroll);
     container.addEventListener('mouseleave', startAutoScroll);
   }
+
   startAutoScroll();
-
-
 })
 </script>
 
