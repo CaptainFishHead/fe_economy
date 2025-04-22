@@ -12,7 +12,8 @@ import { initResponsive } from './utils/responsive'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
-// 初始化响应式设置
+
+
 initResponsive()
 
 const app = createApp(App)
@@ -22,3 +23,6 @@ app.use(pinia);
 app.use(router)
 app.use(MotionPlugin)
 app.mount('#app')
+
+
+

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { getIntroList } from '@/api/home/index'
 import { onMounted, ref } from 'vue'
-
 import { gsap, TimelineMax } from 'gsap'
 import { ScrollMagicPluginGsap } from 'scrollmagic-plugin-gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -10,10 +9,8 @@ import ScrollMagic from 'scrollmagic';
 import anime from 'animejs';
 
 let IntroList = ref([] as any[])
-function getIntroListData() {
+const getIntroListData = () => {
   getIntroList().then((res: any) => {
-    console.log(res);
-
     if (res.code === 200) {
       IntroList = res.data
     }
@@ -57,37 +54,54 @@ onMounted(() => {
     });
   });
 
-  // 滚动动画
-  const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature'];
 
+
+  //  滚动动画合集
+  const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
 
   // 初始化 ScrollMagic 控制器
-  const controller = new ScrollMagic.Controller()
+  // const controller = new ScrollMagic.Controller()
+  // elements.forEach((selector) => {
+  //   const timeline = gsap.timeline()
+  //   timeline.fromTo(selector, {
+  //     autoAlpha: 0,
+  //     y: 300
+  //   }, {
+  //     autoAlpha: 1,
+  //     y: 0,
+  //     duration: 1.2,
+  //     ease: 'power2.out',
+  //     stagger: 0.3
+  //   })
 
-  elements.forEach((selector) => {
-    const timeline = gsap.timeline()
-    timeline.fromTo(selector, {
-      autoAlpha: 0,
-      y: 300
-    }, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 1.2,
-      ease: 'power2.out',
-      stagger: 0.3
-    })
-
-    new ScrollMagic.Scene({
-      triggerElement: selector,
-      triggerHook: 0.75,
-      duration: '80%'
-    })
-    .setTween(timeline)
-    .addTo(controller)
-  })
+  //   new ScrollMagic.Scene({
+  //     triggerElement: selector,
+  //     triggerHook: 0.75,
+  //     duration: '80%'
+  //   })
+  //     .setTween(timeline)
+  //     .addTo(controller)
+  // })
 
 
-  // const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
+  //  滚动分页
+
+  // 为每个 section 创建 ScrollTrigger
+  // sections.forEach((section, index) => {
+  //   ScrollTrigger.create({
+  //     trigger: section, // 当前触发的元素
+  //     start: 'top top', // 当元素顶部与视口顶部对齐时触发
+  //     end: 'bottom bottom', // 当元素底部与视口底部对齐时结束
+  //     snap: 1 / sections.length, // 自动滚动到最近的 section
+  //     markers: false, // 是否显示调试标记
+  //     pin: true, // 固定当前 section
+  //     scrub: true, // 平滑滚动
+  //   });
+  // });
+
+
+  // 自动滚动
+
   // let currentIndex = 0
   // let autoScrollInterval: NodeJS.Timeout | null = null
 
@@ -120,42 +134,18 @@ onMounted(() => {
   // }
 
   // // 初始化滚动触发器
-  // // elements.forEach((selector, index) => {
-  // //   const element = document.querySelector(selector)
-  // //   if (element) {
-  // //     ScrollTrigger.create({
-  // //       trigger: element,
-  // //       start: 'top center',
-  // //       end: 'bottom center',
-  // //       onEnter: () => (currentIndex = index), // 更新当前索引
-  // //     })
-  // //   }
-  // // })
-
-  // // 初始化滚动触发器
   // elements.forEach((selector, index) => {
   //   const element = document.querySelector(selector)
   //   if (element) {
   //     ScrollTrigger.create({
   //       trigger: element,
-  //       start: 'top top',
-  //       end: 'bottom top',
-  //       scrub: true,
+  //       start: 'top center',
+  //       end: 'bottom center',
   //       onEnter: () => (currentIndex = index), // 更新当前索引
-  //       onEnterBack: () => (currentIndex = index), // 更新当前索引
-  //       onUpdate: (self) => {
-  //         // 视差效果
-  //         const progress = self.progress
-  //         gsap.to(element, {
-  //           y: `${-progress * 100}px`, // 视差效果，可以根据需要调整
-  //           duration: 1,
-  //           ease: 'power1.out',
-  //         })
-  //       },
   //     })
   //   }
-  // }
-  // )
+  // })
+
   // // 鼠标悬浮暂停，移开继续
   // const container = document.querySelector('.container')
   // if (container) {
@@ -163,12 +153,68 @@ onMounted(() => {
   //   container.addEventListener('mouseleave', startAutoScroll)
   // }
   // startAutoScroll()
+  //  ======================================
+  let currentIndex = 0;
+  let autoScrollInterval: NodeJS.Timeout | null = null
+
+  // 自动滚动到指定元素
+  const scrollToElement = (index: number) => {
+    const target = document.querySelector(elements[index]);
+    if (target) {
+      gsap.to(window, {
+        scrollTo: { y: target, autoKill: false },
+        duration: 1.5, // 增加滚动时间
+        ease: 'power2.inOut', // 使用更自然的缓动函数
+        overwrite: true
+      });
+    }
+  };
+
+  // 开始自动滚动
+  const startAutoScroll = () => {
+    autoScrollInterval = setInterval(() => {
+      // 为滚动间隔添加随机变化
+      const randomInterval = Math.random() * 2000 + 3000;
+      currentIndex = (currentIndex + 1) % elements.length;
+      scrollToElement(currentIndex);
+    }, 4000);
+  };
+
+  // 停止自动滚动
+  const stopAutoScroll = () => {
+    if (autoScrollInterval) {
+      clearInterval(autoScrollInterval);
+      autoScrollInterval = null;
+    }
+  };
+
+  // 初始化滚动触发器
+  elements.forEach((selector, index) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      ScrollTrigger.create({
+        trigger: element,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: () => (currentIndex = index), // 更新当前索引
+      });
+    }
+  });
+
+  // 鼠标悬浮暂停，移开继续
+  const container = document.querySelector('.container');
+  if (container) {
+    container.addEventListener('mouseenter', stopAutoScroll);
+    container.addEventListener('mouseleave', startAutoScroll);
+  }
+  startAutoScroll();
+
+
 })
 </script>
 
 <template>
   <div class="container">
-
     <div class="feature1">
       <div class="willow2"></div>
       <div class="college">
@@ -198,6 +244,7 @@ onMounted(() => {
 
     <div class="feature4">
       <img src="@/assets/images/briefIntroduction/rain.png" class="img">
+      <img src="@/assets/images/briefIntroduction/willow3.png" class="willow3">
     </div>
 
     <div class="box4feature">
@@ -210,6 +257,7 @@ onMounted(() => {
       <div class="feature6">
         <img src="@/assets/images/briefIntroduction/economics.png" class="img">
       </div>
+      <img src="@/assets/images/briefIntroduction/flower2.png" class="flower1">
     </div>
 
     <div class="box5feature">
@@ -221,6 +269,7 @@ onMounted(() => {
       <div class="feature8">
         <img src="@/assets/images/briefIntroduction/schoolBadge.png" class="img">
       </div>
+      <img src="@/assets/images/briefIntroduction/flower1.png" class="flower2">
     </div>
 
     <div class="box6feature">
@@ -231,25 +280,41 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+
     <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain1">
     <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain2">
     <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain3">
     <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain4">
     <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
-    <img src="@/assets/images/briefIntroduction/petal7.png" class="petal1">
     <img src="@/assets/images/briefIntroduction/petal2.png" class="petal2">
     <img src="@/assets/images/briefIntroduction/petal1.png" class="petal3">
     <img src="@/assets/images/briefIntroduction/petal2.png" class="petal4">
+    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal7">
     <img src="@/assets/images/briefIntroduction/petal1.png" class="petal5">
     <img src="@/assets/images/briefIntroduction/petal3.png" class="petal6">
-    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal7">
-    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal8">
     <img src="@/assets/images/briefIntroduction/petal8.png" class="petal9">
+    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal8">
     <img src="@/assets/images/briefIntroduction/petal6.png" class="petal10">
   </div>
 </template>
 
 <style scoped lang="scss">
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+
+}
+
+/* 隐藏滚动条 */
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .container {
   width: 100%;
   height: 100%;
@@ -261,8 +326,9 @@ onMounted(() => {
   width: 436px;
   height: 604px;
   position: absolute;
-  top: 4000px;
+  bottom: -340px;
   right: 0;
+  z-index: 10;
 }
 
 [class^="petal"] {
@@ -270,6 +336,22 @@ onMounted(() => {
   pointer-events: none;
 }
 
+.flower1 {
+  width: 459px;
+  height: 707px;
+  position: absolute;
+  right: 0;
+  bottom: -30px;
+  z-index: 10;
+}
+
+.flower2 {
+  width: 459px;
+  height: 707px;
+  position: absolute;
+  left: 0;
+  bottom: -40px;
+}
 
 .mountain1 {
   position: absolute;
@@ -332,16 +414,19 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  z-index: 100;
 }
 
 
 
 .feature {
+  z-index: 100;
+
   .title {
     font-weight: 500;
     font-size: 74px;
     color: #444444;
-    margin-bottom: 70px;
+    margin-bottom: 60px;
   }
 
   .content {
@@ -483,46 +568,47 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 
   .img {
     width: 1580px;
-    height: 888px;
+    height: 788px;
   }
 }
 
-.feature5 {}
 
 .feature6 {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+
   .img {
-    display: block;
-    width: 935px;
-    height: 467px;
+    width: 815px;
+    height: 527px;
   }
 }
-
-.feature7 {}
 
 .feature8 {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 
-  &-img {
-    display: block;
-    width: 1008px;
-    height: 694px;
+  .img {
+    width: 828px;
+    height: 524px;
   }
 }
-
-.feature9 {}
 
 .box4feature {
   width: 100%;
   height: 100vh;
+  position: relative;
 }
 
 .box5feature {
   width: 100%;
   height: 100vh;
+  position: relative;
 }
 
 .box6feature {
