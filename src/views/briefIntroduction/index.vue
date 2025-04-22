@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { getIntroList } from '@/api/home/index'
 import { onMounted, ref } from 'vue'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
 import { gsap, TimelineMax } from 'gsap'
-import ScrollMagic from 'scrollmagic';
 import { ScrollMagicPluginGsap } from 'scrollmagic-plugin-gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+import ScrollMagic from 'scrollmagic';
+import anime from 'animejs';
 
 let IntroList = ref([] as any[])
 function getIntroListData() {
@@ -19,63 +22,147 @@ function getIntroListData() {
 
 // 注册 ScrollMagic 和 GSAP 插件
 ScrollMagicPluginGsap(ScrollMagic, gsap, TimelineMax);
-
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 onMounted(() => {
+  // 获取数据
   // getIntroListData()
 
+  // 花瓣动画
+  const petals = document.querySelectorAll('[class^="petal"]');
+  petals.forEach((petal) => {
+    // 随机初始位置
+    const randomX = Math.random() * window.innerWidth;
+    const randomY = -Math.random() * 500;
+    (petal as HTMLElement).style.left = `${randomX}px`;
+    (petal as HTMLElement).style.top = `${randomY}px`;
 
-  // // 初始化控制器
-  // const controller = new ScrollMagic.Controller();
+    // 随机缩放
+    const randomScale = Math.random() * 0.8 + 0.2;
+    (petal as HTMLElement).style.transform = `scale(${randomScale})`;
 
-  // // 定义动画
-  // const wipeAnimation = new TimelineMax()
-  //   .fromTo('.feature1', 1, { x: '-100%' }, { x: '0%', ease: 'none' }) // 从左到右
-  //   .fromTo('.feature2', 1, { x: '-100%' }, { x: '0%', ease: 'none' }) // 从左到右
-  //   .fromTo('.feature3', 1, { y: '-100%' }, { y: '0%', ease: 'none' }) // 从上到下
-  //   .fromTo('.box4feature', 1, { y: '-100%' }, { y: '0%', ease: 'none' }) // 从下到上
-  //   .fromTo('.box5feature', 1, { y: '-100%' }, { y: '0%', ease: 'none' }); // 从下到上
+    // 随机透明度
+    const randomOpacity = Math.random() * 0.8 + 0.2;
+    (petal as HTMLElement).style.opacity = `${randomOpacity}`;
 
-  // // 创建场景以固定和链接动画
-  // const scene = new ScrollMagic.Scene({
-  //   triggerElement: '.container', // 触发元素
-  //   triggerHook: 'onEnter', // 触发钩子
-  //   duration: '300%' // 动画持续时间
-  // })
-  //   .setPin('.container'); // 锚点元素
-  // // 类型断言解决类型问题
-  // (scene as any).setTween(wipeAnimation) // 设置动画
-  //   .addIndicators() // 添加指标（需要插件）
-  //   .addTo(controller); // 将场景添加到控制器
+    anime({
+      targets: petal,
+      translateX: (el: HTMLElement) => [(Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100],
+      translateY: window.innerHeight + 100,
+      rotate: (el: HTMLElement) => [(Math.random() - 0.5) * 720, (Math.random() - 0.5) * 720],
+      duration: (el) => Math.random() * 5000 + 3000,
+      delay: (el) => Math.random() * 2000,
+      loop: true,
+      easing: 'easeInOutSine'
+    });
+  });
 
+  // 滚动动画
+  const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature'];
 
 
-  // gsap.registerPlugin(ScrollTrigger)
-  // gsap.from(".feature2", {
-  //   scrollTrigger: ".feature2",
-  //   duration: 2,
-  //   scale: 0.3
-  // });
-  // gsap.from(".feature3", {
-  //   scrollTrigger: ".feature3",
-  //   duration: 2,
-  //   scale: 0.3
-  // });
-  // gsap.from(".box4feature", {
-  //   scrollTrigger: ".box4feature",
-  //   duration: 4,
-  //   scale: 0.3
-  // });
-  // gsap.from(".box5feature", {
-  //   scrollTrigger: ".box5feature",
-  //   duration: 5, // 滚动时间
-  //   scale: 0.3 // 缩放比例
-  // });
-  // gsap.from(".box6feature", {
-  //   scrollTrigger: ".box6feature",
-  //   duration: 5, // 滚动时间
-  //   scale: 0.3 // 缩放比例
-  // });
+  // 初始化 ScrollMagic 控制器
+  const controller = new ScrollMagic.Controller()
+
+  elements.forEach((selector) => {
+    const timeline = gsap.timeline()
+    timeline.fromTo(selector, {
+      autoAlpha: 0,
+      y: 300
+    }, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+      stagger: 0.3
+    })
+
+    new ScrollMagic.Scene({
+      triggerElement: selector,
+      triggerHook: 0.75,
+      duration: '80%'
+    })
+    .setTween(timeline)
+    .addTo(controller)
+  })
+
+
+  // const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
+  // let currentIndex = 0
+  // let autoScrollInterval: NodeJS.Timeout | null = null
+
+  // // 自动滚动到指定元素
+  // const scrollToElement = (index: number) => {
+  //   const target = document.querySelector(elements[index])
+  //   if (target) {
+  //     gsap.to(window, {
+  //       scrollTo: { y: target, autoKill: false },
+  //       duration: 1,
+  //       ease: 'power1.inOut',
+  //     })
+  //   }
+  // }
+
+  // // 开始自动滚动
+  // const startAutoScroll = () => {
+  //   autoScrollInterval = setInterval(() => {
+  //     currentIndex = (currentIndex + 1) % elements.length
+  //     scrollToElement(currentIndex)
+  //   }, 4000) // 每4秒滚动一次
+  // }
+
+  // // 停止自动滚动
+  // const stopAutoScroll = () => {
+  //   if (autoScrollInterval) {
+  //     clearInterval(autoScrollInterval)
+  //     autoScrollInterval = null
+  //   }
+  // }
+
+  // // 初始化滚动触发器
+  // // elements.forEach((selector, index) => {
+  // //   const element = document.querySelector(selector)
+  // //   if (element) {
+  // //     ScrollTrigger.create({
+  // //       trigger: element,
+  // //       start: 'top center',
+  // //       end: 'bottom center',
+  // //       onEnter: () => (currentIndex = index), // 更新当前索引
+  // //     })
+  // //   }
+  // // })
+
+  // // 初始化滚动触发器
+  // elements.forEach((selector, index) => {
+  //   const element = document.querySelector(selector)
+  //   if (element) {
+  //     ScrollTrigger.create({
+  //       trigger: element,
+  //       start: 'top top',
+  //       end: 'bottom top',
+  //       scrub: true,
+  //       onEnter: () => (currentIndex = index), // 更新当前索引
+  //       onEnterBack: () => (currentIndex = index), // 更新当前索引
+  //       onUpdate: (self) => {
+  //         // 视差效果
+  //         const progress = self.progress
+  //         gsap.to(element, {
+  //           y: `${-progress * 100}px`, // 视差效果，可以根据需要调整
+  //           duration: 1,
+  //           ease: 'power1.out',
+  //         })
+  //       },
+  //     })
+  //   }
+  // }
+  // )
+  // // 鼠标悬浮暂停，移开继续
+  // const container = document.querySelector('.container')
+  // if (container) {
+  //   container.addEventListener('mouseenter', stopAutoScroll)
+  //   container.addEventListener('mouseleave', startAutoScroll)
+  // }
+  // startAutoScroll()
 })
 </script>
 
@@ -101,44 +188,42 @@ onMounted(() => {
 
     <div class="feature3">
       <div class="form">
-        <div class="content">中国经济学教育的旗舰、优秀经济学人才的摇篮。新中国理论经济学的重要奠基者与开拓者。终于哦特色社会主义经济思想的引领者。中国经济学研究的理论重镇。</div>
+        <div class="content">立足中国真实创新中国理论培养中国人才推动中国发展。</div>
         <div class="title">
-          <div class="text">学院特色</div>
+          <div class="text">学院愿景</div>
         </div>
       </div>
       <img src="@/assets/images/briefIntroduction/vision.png" class="people"></img>
     </div>
 
-    <div class="box4feature">
-      <div class="feature4">
-        <img src="@/assets/images/briefIntroduction/rain.png" class="img">
-      </div>
+    <div class="feature4">
+      <img src="@/assets/images/briefIntroduction/rain.png" class="img">
+    </div>
 
+    <div class="box4feature">
       <div class="feature5 feature">
         <div class="title">教育旗舰 理论重镇</div>
         <div class="content">
           中国人民大学经济学院于1998年正式组建，其前身最早可以溯源至1939年陕北公学设立的政治经济学研究室，后历经华北大学、华北联合大学演进，是新中国经济学科的重要奠基者和开拓者。作为中国经济学教育与研究的理论重镇，经济学院承担着培养高层次杰出经济学人才，构建中国气派、中国风格的经济学教育高地，为国家经济发展建言献策的伟大使命。
         </div>
       </div>
-    </div>
-
-    <div class="box5feature">
       <div class="feature6">
         <img src="@/assets/images/briefIntroduction/economics.png" class="img">
       </div>
+    </div>
 
+    <div class="box5feature">
       <div class="feature7 feature">
         <div class="content">
           经济学院设有经济学、国际经济与贸易、数字经济3个本科专业，12个硕士点，10个博士点，“经济学—数学”双学位实验班、“中国经济”全英文硕士班、理论经济学硕博连读实验班等8个创新人才培养平台；拥有国家重点一级学科“理论经济学”，国家重点二级学科“政治经济学”、“西方经济学”，北京市重点二级学科“世界经济学”；是国家经济学基础人才培养基地、教育部人文社会科学重点研究基地、国家“统筹支持一流大学和一流学科建设”项目、国家“2011”中国特色社会主义经济建设协同创新中心协同单位和全国中国特色社会主义政治经济学研究中心。在2004年、2008年、2012年和2016年四轮国家重点一级学科评估中，理论经济学名列全国第一。2017年，在经国务院批准下发的《关于公布世界一流大学和一流学科建设高校及建设学科名单的通知》中，理论经济学入选A类一流大学建设名单。
         </div>
       </div>
-    </div>
-
-    <div class="box6feature">
       <div class="feature8">
         <img src="@/assets/images/briefIntroduction/schoolBadge.png" class="img">
       </div>
+    </div>
 
+    <div class="box6feature">
       <div class="feature9 feature">
         <div class="title">大师云集 实力强悍</div>
         <div class="content">
@@ -146,7 +231,21 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
+    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain1">
+    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain2">
+    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain3">
+    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain4">
+    <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
+    <img src="@/assets/images/briefIntroduction/petal7.png" class="petal1">
+    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal2">
+    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal3">
+    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal4">
+    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal5">
+    <img src="@/assets/images/briefIntroduction/petal3.png" class="petal6">
+    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal7">
+    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal8">
+    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal9">
+    <img src="@/assets/images/briefIntroduction/petal6.png" class="petal10">
   </div>
 </template>
 
@@ -154,12 +253,90 @@ onMounted(() => {
 .container {
   width: 100%;
   height: 100%;
-  padding-bottom: 126px;
+  overflow: hidden;
+  position: relative;
 }
 
-.feature {
-  margin: 0 170px;
+.willow3 {
+  width: 436px;
+  height: 604px;
+  position: absolute;
+  top: 4000px;
+  right: 0;
+}
 
+[class^="petal"] {
+  position: absolute;
+  pointer-events: none;
+}
+
+
+.mountain1 {
+  position: absolute;
+  top: 1900px;
+  right: 111px;
+  width: 780px;
+  height: 281px;
+}
+
+.mountain2 {
+  position: absolute;
+  top: 2900px;
+  left: 0;
+  width: 780px;
+  height: 281px;
+}
+
+.mountain3 {
+  position: absolute;
+  top: 4500px;
+  right: 0;
+  width: 780px;
+  height: 281px;
+}
+
+.mountain4 {
+  position: absolute;
+  bottom: 1500px;
+  left: 0;
+  width: 800px;
+  height: 338px;
+}
+
+.mountain5 {
+  position: absolute;
+  bottom: 0;
+  left: 127px;
+  width: 1165px;
+  height: 405px;
+}
+
+
+.feature1,
+.feature2,
+.feature3,
+.feature4,
+.box4feature,
+.box5feature,
+.box6feature {
+  height: 100vh;
+  padding: 0 170px;
+  transition: transform 1s ease, opacity 1s ease;
+  will-change: transform;
+}
+
+.box4feature,
+.box5feature,
+.box6feature {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+
+.feature {
   .title {
     font-weight: 500;
     font-size: 74px;
@@ -214,10 +391,8 @@ onMounted(() => {
 
 .feature2 {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin: 0 170px;
-  height: 100vh;
+  align-items: center;
 
   .people {
     width: 1095px;
@@ -262,10 +437,8 @@ onMounted(() => {
 
 .feature3 {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin: 0 170px;
-  height: 100vh;
+  align-items: center;
 
   .people {
     width: 819px;
@@ -304,42 +477,32 @@ onMounted(() => {
       }
     }
   }
-
 }
 
 .feature4 {
-  padding: 0 170px;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   .img {
-    width: 1539px;
-    height: 688px;
+    width: 1580px;
+    height: 888px;
   }
 }
 
-.feature5 {
-  margin-bottom: 20px;
-}
+.feature5 {}
 
 .feature6 {
-  padding: 0 170px;
-
   .img {
     display: block;
-    width: 1035px;
-    height: 667px;
+    width: 935px;
+    height: 467px;
   }
 }
 
-.feature7 {
-  margin-top: 30px;
-  margin-bottom: 60px;
-}
+.feature7 {}
 
 .feature8 {
-  height: 50vh;
-  padding: 0 170px;
   display: flex;
   justify-content: flex-end;
 
@@ -350,9 +513,7 @@ onMounted(() => {
   }
 }
 
-.feature9 {
-  height: 50vh;
-}
+.feature9 {}
 
 .box4feature {
   width: 100%;
