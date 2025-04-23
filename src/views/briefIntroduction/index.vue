@@ -17,6 +17,30 @@ const getIntroListData = () => {
   })
 }
 
+
+// 学院介绍数据
+const IntroData = ref([{
+  title: '学院特色',
+  content: '中国经济学教育的旗舰、优秀经济学人才的摇篮。新中国理论经济学的重要奠基者与开拓者。终于哦特色社会主义经济思想的引领者。中国经济学研究的理论重镇。'
+},
+{
+  title: '学院愿景',
+  content: '立足中国真实创新中国理论培养中国人才推动中国发展。'
+},
+]) as any
+
+let collegeFeatures = ref<string[]>([])
+let collegeVision = ref<string[]>([])
+const slicedString = (originalString: any) => {
+  const result = [];
+  for (let i = 0; i < originalString.length; i += 11) {
+    result.push(originalString.slice(i, i + 11));
+  }
+  return result;
+}
+collegeFeatures.value = slicedString(IntroData.value[0].content)
+collegeVision.value = slicedString(IntroData.value[1].content)
+
 // 注册 ScrollMagic 和 GSAP 插件
 ScrollMagicPluginGsap(ScrollMagic, gsap, TimelineMax);
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
@@ -28,6 +52,13 @@ onMounted(() => {
   // 花瓣动画
   const petals = document.querySelectorAll('[class^="petal"]');
   petals.forEach((petal) => {
+    // 创建一个克隆的花瓣，使数量翻倍
+    const clone = petal.cloneNode(true) as HTMLElement;
+    petal.parentElement?.appendChild(clone);
+  });
+
+  const allPetals = document.querySelectorAll('[class^="petal"]');
+  allPetals.forEach((petal) => {
     // 随机初始位置
     const randomX = Math.random() * window.innerWidth;
     const randomY = -Math.random() * 500;
@@ -45,7 +76,7 @@ onMounted(() => {
     anime({
       targets: petal,
       translateX: (el: HTMLElement) => [(Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100],
-      translateY: window.innerHeight + 100,
+      translateY: window.innerHeight + 500, // 飘落到最底部
       rotate: (el: HTMLElement) => [(Math.random() - 0.5) * 720, (Math.random() - 0.5) * 720],
       duration: (el) => Math.random() * 5000 + 3000,
       delay: (el) => Math.random() * 2000,
@@ -171,7 +202,9 @@ onMounted(() => {
     <div class="feature2">
       <img src="@/assets/images/briefIntroduction/people.png" class="people"></img>
       <div class="form">
-        <div class="content">中国经济学教育的旗舰、优秀经济学人才的摇篮。新中国理论经济学的重要奠基者与开拓者。终于哦特色社会主义经济思想的引领者。中国经济学研究的理论重镇。</div>
+        <div class="content">
+          <span v-for="(item) in collegeFeatures">{{ item }}</span>
+        </div>
         <div class="title">
           <div class="text">学院特色</div>
         </div>
@@ -180,7 +213,9 @@ onMounted(() => {
 
     <div class="feature3">
       <div class="form">
-        <div class="content">立足中国真实创新中国理论培养中国人才推动中国发展。</div>
+        <div class="content">
+          <span v-for="(item) in collegeVision">{{ item }}</span>
+        </div>
         <div class="title">
           <div class="text">学院愿景</div>
         </div>
@@ -264,6 +299,7 @@ body::-webkit-scrollbar {
 .container {
   width: 100%;
   height: 100%;
+  letter-spacing: 2px;
   overflow: hidden;
   position: relative;
 }
@@ -300,16 +336,16 @@ body::-webkit-scrollbar {
 }
 
 .mountain1 {
-  position: absolute;
-  top: 1900px;
-  right: 111px;
   width: 780px;
   height: 281px;
+  position: absolute;
+  top: 1600px;
+  right: 111px;
 }
 
 .mountain2 {
   position: absolute;
-  top: 2900px;
+  top: 2700px;
   left: 0;
   width: 780px;
   height: 281px;
@@ -357,7 +393,7 @@ body::-webkit-scrollbar {
 .box5feature,
 .box6feature {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   z-index: 100;
@@ -369,6 +405,7 @@ body::-webkit-scrollbar {
   z-index: 100;
 
   .title {
+    font-family: SourceHanSansCN-Medium;
     font-weight: 500;
     font-size: 74px;
     color: #444444;
@@ -376,6 +413,7 @@ body::-webkit-scrollbar {
   }
 
   .content {
+    font-family: SourceHanSansCN-Normal;
     font-weight: 400;
     font-size: 32px;
     color: #444444;
@@ -423,11 +461,11 @@ body::-webkit-scrollbar {
 .feature2 {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 
   .people {
-    width: 1095px;
-    height: 815px;
+    width: 990px;
+    height: 725px;
   }
 
   .form {
@@ -437,13 +475,18 @@ body::-webkit-scrollbar {
     .content {
       writing-mode: vertical-rl;
       height: 431px;
-      font-family: Source Han Sans CN;
+      font-family: SourceHanSansCN-Normal;
       font-weight: 400;
       font-size: 32px;
       color: #121212;
-      line-height: 60px;
+      line-height: 50px;
       opacity: 0.8;
-      line-height: 2;
+
+      span {
+        padding: 10px 0;
+        display: inline-block;
+        border-right: 1px solid #B7070F;
+      }
     }
 
     .title {
@@ -473,7 +516,7 @@ body::-webkit-scrollbar {
 
   .people {
     width: 819px;
-    height: 826px;
+    height: 726px;
   }
 
   .form {
@@ -483,12 +526,19 @@ body::-webkit-scrollbar {
     .content {
       writing-mode: vertical-rl;
       height: 431px;
-      font-family: Source Han Sans CN;
+      font-family: SourceHanSansCN-Normal;
       font-weight: 400;
       font-size: 32px;
       color: #121212;
-      line-height: 60px;
+      line-height: 50px;
       opacity: 0.8;
+
+      span {
+        padding: 10px 0;
+        display: inline-block;
+        border-right: 1px solid #B7070F;
+      }
+
     }
 
     .title {
