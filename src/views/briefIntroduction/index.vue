@@ -17,8 +17,8 @@ const getIntroListData = () => {
   })
 }
 
-
-// 学院介绍数据
+let collegeFeatures = ref<string[]>([])
+let collegeVision = ref<string[]>([])
 const IntroData = ref([{
   title: '学院特色',
   content: '中国经济学教育的旗舰、优秀经济学人才的摇篮。新中国理论经济学的重要奠基者与开拓者。终于哦特色社会主义经济思想的引领者。中国经济学研究的理论重镇。'
@@ -28,18 +28,19 @@ const IntroData = ref([{
   content: '立足中国真实创新中国理论培养中国人才推动中国发展。'
 },
 ]) as any
+const processIntroData = () => {
+  const slicedString = (originalString: any) => {
+    const result = [];
+    for (let i = 0; i < originalString.length; i += 11) {
+      result.push(originalString.slice(i, i + 11));
+    }
+    return result;
+  };
+  collegeFeatures.value = slicedString(IntroData.value[0].content);
+  collegeVision.value = slicedString(IntroData.value[1].content);
+};
 
-let collegeFeatures = ref<string[]>([])
-let collegeVision = ref<string[]>([])
-const slicedString = (originalString: any) => {
-  const result = [];
-  for (let i = 0; i < originalString.length; i += 11) {
-    result.push(originalString.slice(i, i + 11));
-  }
-  return result;
-}
-collegeFeatures.value = slicedString(IntroData.value[0].content)
-collegeVision.value = slicedString(IntroData.value[1].content)
+processIntroData();
 
 // 注册 ScrollMagic 和 GSAP 插件
 ScrollMagicPluginGsap(ScrollMagic, gsap, TimelineMax);
@@ -52,107 +53,127 @@ onMounted(() => {
   // 花瓣动画
   const petals = document.querySelectorAll('[class^="petal"]');
   petals.forEach((petal) => {
-    // 创建一个克隆的花瓣，使数量翻倍
     const clone = petal.cloneNode(true) as HTMLElement;
     petal.parentElement?.appendChild(clone);
   });
 
   const allPetals = document.querySelectorAll('[class^="petal"]');
   allPetals.forEach((petal) => {
-    // 随机初始位置
     const randomX = Math.random() * window.innerWidth;
     const randomY = -Math.random() * 500;
     (petal as HTMLElement).style.left = `${randomX}px`;
     (petal as HTMLElement).style.top = `${randomY}px`;
 
-    // 随机缩放
-    const randomScale = Math.random() * 0.8 + 0.2;
-    (petal as HTMLElement).style.transform = `scale(${randomScale})`;
-
-    // 随机透明度
-    const randomOpacity = Math.random() * 0.8 + 0.2;
-    (petal as HTMLElement).style.opacity = `${randomOpacity}`;
-
+    // 增强花瓣动画效果
     anime({
       targets: petal,
-      translateX: (el: HTMLElement) => [(Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100],
-      translateY: window.innerHeight + 500, // 飘落到最底部
-      rotate: (el: HTMLElement) => [(Math.random() - 0.5) * 720, (Math.random() - 0.5) * 720],
-      duration: (el) => Math.random() * 5000 + 3000,
-      delay: (el) => Math.random() * 2000,
+      translateX: [
+        { value: (Math.random() - 0.5) * 300, duration: 3000 },
+        { value: (Math.random() - 0.5) * 500, duration: 3000 },
+        { value: (Math.random() - 0.5) * 300, duration: 3000 }
+      ],
+      translateY: [
+        { value: window.innerHeight * 0.5, duration: 3000 },
+        { value: window.innerHeight + 500, duration: 3000 }
+      ],
+      rotate: [
+        { value: Math.random() * 360, duration: 3000 },
+        { value: Math.random() * 720, duration: 3000 }
+      ],
+      scale: [
+        { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+        { value: Math.random() * 0.3 + 0.2, duration: 1500 }
+      ],
+      opacity: [
+        { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+        { value: 0, duration: 1500 }
+      ],
+      duration: Math.random() * 6000 + 4000,
+      delay: Math.random() * 2000,
       loop: true,
-      easing: 'easeInOutSine'
+      easing: 'easeInOutSine',
+      direction: 'alternate'
     });
   });
-
-
 
   //  滚动动画合集
   const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
 
-  // 初始化 ScrollMagic 控制器
-  // const controller = new ScrollMagic.Controller()
-  // elements.forEach((selector) => {
-  //   const timeline = gsap.timeline()
-  //   timeline.fromTo(selector, {
-  //     autoAlpha: 0,
-  //     y: 300
-  //   }, {
-  //     autoAlpha: 1,
-  //     y: 0,
-  //     duration: 1.2,
-  //     ease: 'power2.out',
-  //     stagger: 0.3
-  //   })
-
-  //   new ScrollMagic.Scene({
-  //     triggerElement: selector,
-  //     triggerHook: 0.75,
-  //     duration: '80%'
-  //   })
-  //     .setTween(timeline)
-  //     .addTo(controller)
-  // })
-
-
-  //  滚动分页
-
-  // 为每个 section 创建 ScrollTrigger
-  // sections.forEach((section, index) => {
-  //   ScrollTrigger.create({
-  //     trigger: section, // 当前触发的元素
-  //     start: 'top top', // 当元素顶部与视口顶部对齐时触发
-  //     end: 'bottom bottom', // 当元素底部与视口底部对齐时结束
-  //     snap: 1 / sections.length, // 自动滚动到最近的 section
-  //     markers: false, // 是否显示调试标记
-  //     pin: true, // 固定当前 section
-  //     scrub: true, // 平滑滚动
-  //   });
-  // });
-
-
-  // 自动滚动
-
   let currentIndex = 0;
-  let autoScrollInterval: NodeJS.Timeout | null = null
-  // 自动滚动到指定元素
+  let autoScrollInterval: NodeJS.Timeout | null = null;
+  let isScrolling = false;
+
+  // 内容动画函数
+  const animateContent = (element: HTMLElement) => {
+    // 文字动画
+    const titles = element.querySelectorAll('.title');
+    titles.forEach(title => {
+      gsap.from(title, {
+        duration: 1,
+        opacity: 0,
+        y: 50,
+        ease: 'power3.out'
+      });
+    });
+
+    // 内容文字动画
+    const contents = element.querySelectorAll('.content');
+    contents.forEach(content => {
+      gsap.fromTo(
+        content,
+        { opacity: 0, y: 30, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.2 },
+        "-=0.8");
+    });
+
+    // 图片动画
+    const images = element.querySelectorAll('img');
+    images.forEach(img => {
+      gsap.from(img,
+        { duration: 1, opacity: 0, scale: 0.8, ease: 'power3.out' }
+      );
+    });
+  };
+
+  // 滚动到指定元素
   const scrollToElement = (index: number) => {
+    if (isScrolling) return;
+    isScrolling = true;
     const target = document.querySelector(elements[index]);
     if (target) {
       gsap.to(window, {
-        scrollTo: { y: target, autoKill: false },
-        duration: 1.5, // 增加滚动时间
-        ease: 'power2.inOut', // 使用更自然的缓动函数
-        overwrite: true
+        duration: 1.2,
+        scrollTo: {
+          y: target,
+          autoKill: false
+        },
+        ease: 'power2.inOut',
+        onComplete: () => {
+          isScrolling = false;
+        }
       });
     }
   };
 
-  // 开始自动滚动
+  // 处理滚轮事件
+  const handleWheel = (e: WheelEvent) => {
+    if (!autoScrollInterval) {  // 只在自动滚动停止时处理
+      e.preventDefault();
+      if (!isScrolling) {
+        if (e.deltaY > 0 && currentIndex < elements.length - 1) {
+          currentIndex++;
+          scrollToElement(currentIndex);
+        } else if (e.deltaY < 0 && currentIndex > 0) {
+          currentIndex--;
+          scrollToElement(currentIndex);
+        }
+      }
+    }
+  };
+
+  // 自动滚动
   const startAutoScroll = () => {
     autoScrollInterval = setInterval(() => {
-      // 为滚动间隔添加随机变化
-      const randomInterval = Math.random() * 2000 + 3000;
       currentIndex = (currentIndex + 1) % elements.length;
       scrollToElement(currentIndex);
     }, 4000);
@@ -166,25 +187,34 @@ onMounted(() => {
     }
   };
 
-  // 初始化滚动触发器
-  elements.forEach((selector, index) => {
-    const element = document.querySelector(selector);
-    if (element) {
-      ScrollTrigger.create({
-        trigger: element,
-        start: 'top center',
-        end: 'bottom center',
-        onEnter: () => (currentIndex = index), // 更新当前索引
-      });
-    }
-  });
-
-  // 鼠标悬浮暂停，移开继续
+  // 添加事件监听
   const container = document.querySelector('.container');
   if (container) {
-    container.addEventListener('mouseenter', stopAutoScroll);
-    container.addEventListener('mouseleave', startAutoScroll);
+    container.addEventListener('mouseenter', () => {
+      stopAutoScroll();
+      container.addEventListener('wheel', handleWheel, { passive: false });
+    });
+
+    container.addEventListener('mouseleave', () => {
+      container.removeEventListener('wheel', handleWheel);
+      startAutoScroll();
+    });
   }
+
+  // 添加视差滚动效果
+  const parallaxElements = ['.mountain1', '.mountain2', '.mountain3', '.mountain4', '.mountain5'];
+  parallaxElements.forEach((selector, index) => {
+    gsap.to(selector, {
+      scrollTrigger: {
+        trigger: '.container',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1
+      },
+      y: (index + 1) * 150,
+      ease: 'none'
+    });
+  });
 
   startAutoScroll();
 })
@@ -198,7 +228,6 @@ onMounted(() => {
         <div class="text">学院介绍</div>
       </div>
     </div>
-
     <div class="feature2">
       <img src="@/assets/images/briefIntroduction/people.png" class="people"></img>
       <div class="form">
@@ -209,8 +238,8 @@ onMounted(() => {
           <div class="text">学院特色</div>
         </div>
       </div>
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain1">
     </div>
-
     <div class="feature3">
       <div class="form">
         <div class="content">
@@ -221,13 +250,13 @@ onMounted(() => {
         </div>
       </div>
       <img src="@/assets/images/briefIntroduction/vision.png" class="people"></img>
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain2">
+      <img src="@/assets/images/briefIntroduction/willow1.png" class="mountain6">
     </div>
-
     <div class="feature4">
       <img src="@/assets/images/briefIntroduction/rain.png" class="img">
       <img src="@/assets/images/briefIntroduction/willow3.png" class="willow3">
     </div>
-
     <div class="box4feature">
       <div class="feature5 feature">
         <div class="title">教育旗舰 理论重镇</div>
@@ -239,8 +268,8 @@ onMounted(() => {
         <img src="@/assets/images/briefIntroduction/economics.png" class="img">
       </div>
       <img src="@/assets/images/briefIntroduction/flower2.png" class="flower1">
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain3">
     </div>
-
     <div class="box5feature">
       <div class="feature7 feature">
         <div class="content">
@@ -251,8 +280,8 @@ onMounted(() => {
         <img src="@/assets/images/briefIntroduction/schoolBadge.png" class="img">
       </div>
       <img src="@/assets/images/briefIntroduction/flower1.png" class="flower2">
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain4">
     </div>
-
     <div class="box6feature">
       <div class="feature9 feature">
         <div class="title">大师云集 实力强悍</div>
@@ -260,23 +289,16 @@ onMounted(() => {
           经济学院拥有目前国内最为完整和具有重大社会影响、老中青年龄结构合理的经济学专家团队，引领国内学术前沿，为党和国家的重大理论创新提供了有力的智力支持；形成了特点鲜明、结构完善的课程体系、教材体系和人才培养体系，牢牢地确立了国内最重要经济学人才培养基地的地位，在新时期为中央和各级政府机关、国际国内院校、全球顶尖企业输送了大批的优秀工作者。
         </div>
       </div>
+      <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
     </div>
-
-
-    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain1">
-    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain2">
-    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain3">
-    <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain4">
-    <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
-    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal2">
-    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal3">
-    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal4">
-    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal7">
-    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal5">
-    <img src="@/assets/images/briefIntroduction/petal3.png" class="petal6">
-    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal9">
-    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal8">
-    <img src="@/assets/images/briefIntroduction/petal6.png" class="petal10">
+    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal7.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal3.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal6.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal">
   </div>
 </template>
 
@@ -285,13 +307,9 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
   margin: 0;
-  /* 1 */
   line-height: inherit;
-  /* 2 */
-
 }
 
-/* 隐藏滚动条 */
 body::-webkit-scrollbar {
   display: none;
 }
@@ -308,7 +326,7 @@ body::-webkit-scrollbar {
   width: 436px;
   height: 604px;
   position: absolute;
-  bottom: -340px;
+  bottom: -440px;
   right: 0;
   z-index: 10;
 }
@@ -339,21 +357,29 @@ body::-webkit-scrollbar {
   width: 780px;
   height: 281px;
   position: absolute;
-  top: 1600px;
-  right: 111px;
+  bottom: -20px;
+  right: 0px;
 }
 
 .mountain2 {
   position: absolute;
-  top: 2700px;
+  bottom: 40px;
   left: 0;
   width: 780px;
   height: 281px;
 }
 
+.mountain6 {
+  position: absolute;
+  bottom: 100px;
+  left: 480px;
+  width: 330px;
+  height: 217px;
+}
+
 .mountain3 {
   position: absolute;
-  top: 4500px;
+  top: 240px;
   right: 0;
   width: 780px;
   height: 281px;
@@ -361,8 +387,8 @@ body::-webkit-scrollbar {
 
 .mountain4 {
   position: absolute;
-  bottom: 1500px;
-  left: 0;
+  top: 120px;
+  left: 90px;
   width: 800px;
   height: 338px;
 }
@@ -383,20 +409,22 @@ body::-webkit-scrollbar {
 .box4feature,
 .box5feature,
 .box6feature {
+  width: 100%;
   height: 100vh;
   padding: 0 170px;
-  transition: transform 1s ease, opacity 1s ease;
-  will-change: transform;
+  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+  will-change: transform, opacity;
 }
 
 .box4feature,
 .box5feature,
 .box6feature {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 100;
+  position: relative;
 }
 
 
@@ -461,7 +489,8 @@ body::-webkit-scrollbar {
 .feature2 {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  position: relative;
 
   .people {
     width: 990px;
@@ -511,12 +540,13 @@ body::-webkit-scrollbar {
 
 .feature3 {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
+  position: relative;
 
   .people {
-    width: 819px;
-    height: 726px;
+    width: 780px;
+    height: 826px;
   }
 
   .form {
@@ -572,7 +602,6 @@ body::-webkit-scrollbar {
   }
 }
 
-
 .feature6 {
   width: 100%;
   display: flex;
@@ -610,5 +639,15 @@ body::-webkit-scrollbar {
 .box6feature {
   width: 100%;
   height: 100vh;
+}
+
+
+.feature:hover {
+  transform: translateY(-10px);
+  transition: transform 0.3s ease;
+}
+
+img {
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 </style>

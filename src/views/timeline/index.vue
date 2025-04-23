@@ -1,20 +1,28 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import ScrollMagic from 'scrollmagic';
+
+// 注册 ScrollTrigger 插件
+gsap.registerPlugin(ScrollTrigger);
+
+
 const timelineList = ref([
   { name: '1946~1950年', content: '经济学院的前身可以溯源至1946年华北联合大学设立的财经系，该系于1947年改称经济学系，系主任先后为何干之（兼）和宋涛。1950年，成立国民经济计划系。' },
   { name: '1956年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
   { name: '1957年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
   { name: '1960年', content: '1960年，经济系更名为政治经济学系。从1956年到60年代初的一段时期里，在经济系学习的学生、研究生达800多人，包括教职工' },
   { name: '1960~1962年', content: '1960年，国民经济计划系与统计系合并成立计划经济系；1961年，经济地理专业和运输经济专业并入计划经济系；1962年运输经济' },
-  { name: '1981年', content: '1981年，政治经济学、世界经济被教育部批准为全国首批博士学位授权点。' },
+  { name: '1981年', content: '1981年，政治经济学、世界经济被教育部批准为全国首批学位授权点。' },
   { name: '1983年', content: '1983年，计划统计学院成立，下辖统计系和计划经济学系。' },
-  { name: '1984年', content: '1984年，中国人民大学经济学研究所成立，所长先后为余学本和胡乃武。同年，西方经济学教研室分别获得外国经济思想史（含西方经济学方向）硕士和博士学位授予权，是最早获得这两个学位点的单位之一。' },
+  { name: '1984年', content: '1984年，中国人民大学经济学研究所成立，所长先后为余学本和胡乃武。同年，西方经济学教研室分别获得外国经济思想史（含西方经济学方向）硕士和学位授予权，是最早获得这两个学位点的单位之一。' },
   { name: '1985年', content: '1985年，政治经济学系改名为经济学系。同年，中国经济史、外国经济史硕士点先后设立。' },
   { name: '1988年', content: '1988年，在原经济学系世界经济专业基础上成立国际经济系，下设国际经济专业和太平洋经济研究所。' },
-  { name: '1992年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和博士学位授予权。' },
-  { name: '1993年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和博士学位授予权。' },
-  { name: '1996年', content: '1996年，中国经济改革与发展研究院成立并于1999年12月被批准为“教育部人文社会科学百所重点研究基地”。' },
-  { name: '1998年', content: '1998年，国务院学位委员会批准中国人民大学申报理论经济学一级学科博士学位授权。同年，经济学系、国际经济系和经济学研究所合并成经济学院。' },
+  { name: '1992年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
+  { name: '1993年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
+  { name: '1996年', content: '1996年，中国经济改革与发展研究院成立并于1999年12月被批准为"教育部人文社会科学百所重点研究基地"。' },
+  { name: '1998年', content: '1998年，国务院学位委员会批准中国人民大学申报理论经济学一级学科学位授权。同年，经济学系、国际经济系和经济学研究所合并成经济学院。' },
   { name: '2006年', content: '2006年，国民经济管理系并入经济学院。' },
   { name: '2010年', content: '2010年，区域与城市经济研究所并入经济学院。' },
   { name: '2011年', content: '2011年，经济学院设立能源经济系，国际经济系设立国际商务硕士专业学位。' },
@@ -23,14 +31,168 @@ const timelineList = ref([
   { name: '2019年', content: '2019年，经济学院重组改革、踏上了崭新的历史阶段。' },
 ])
 
+
+
+
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // 设置默认缓动
+  gsap.defaults({
+    ease: "power2.out"
+  });
+
+  // 滚动动画初始化
+  const initScrollAnimations = () => {
+    // 时间轴项目动画
+    const timelineItems = gsap.utils.toArray('.timeline-item');
+    timelineItems.forEach((item: Element) => {
+      const isLeft = item.classList.contains('item-left');
+      const content = item.querySelector('.timeline-item-content');
+      const name = item.querySelector('.timeline-item-name');
+      const icons = item.querySelectorAll('.icon, .icon-2');
+      const line = item.querySelector('.line');
+
+      const itemTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: item,
+          start: "top 80%", // 提前触发
+          end: "center center",
+          toggleActions: "restart none none reverse", // 重复触发
+          scrub: 1.5, // 平滑过渡
+        }
+      });
+
+      itemTimeline
+        .fromTo(item, {
+          opacity: 0,
+          x: isLeft ? -100 : 100,
+          rotateY: isLeft ? -45 : 45,
+          scale: 0.8
+        }, {
+          opacity: 1,
+          x: 0,
+          rotateY: 0,
+          scale: 1,
+          duration: 1.5
+        })
+        .fromTo(name, {
+          opacity: 0,
+          y: 20
+        }, {
+          opacity: 1,
+          y: 0,
+          duration: 1
+        }, "-=1")
+        .fromTo(content, {
+          opacity: 0,
+          y: 30,
+          scale: 0.95
+        }, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.2
+        }, "-=0.8")
+        .fromTo(icons, {
+          scale: 0,
+          opacity: 0,
+          rotation: -180
+        }, {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1,
+          stagger: 0.2
+        }, "-=1")
+        .fromTo(line, {
+          scaleX: 0,
+          opacity: 0
+        }, {
+          scaleX: 1,
+          opacity: 1,
+          duration: 1
+        }, "-=0.8");
+    });
+
+    // 卡片动画
+    const cards = gsap.utils.toArray('.card');
+    cards.forEach((card: Element, index: number) => {
+      gsap.fromTo(card,
+        {
+          opacity: 0,
+          y: 50,
+          scale: 0.8,
+          rotateX: 15
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          duration: 1.5,
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            end: "center center",
+            toggleActions: "restart none none reverse",
+            scrub: 2
+          }
+        }
+      );
+    });
+
+    // 花朵动画
+    const flowers = gsap.utils.toArray('.flower_1, .flower_2, .flower_3, .flower_4');
+    flowers.forEach((flower: Element, index: number) => {
+      // 入场动画
+      gsap.fromTo(flower,
+        {
+          opacity: 0,
+          scale: 0.8,
+          y: 30
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 1.5,
+          scrollTrigger: {
+            trigger: flower,
+            start: "top 90%",
+            end: "center center",
+            toggleActions: "restart none none reverse",
+            scrub: 1
+          }
+        }
+      );
+
+      // 持续的漂浮动画
+      gsap.to(flower, {
+        y: `random(-${20 + index * 5}, ${20 + index * 5})`,
+        x: `random(-${15 + index * 3}, ${15 + index * 3})`,
+        rotation: `random(-${4 + index}, ${4 + index})`,
+        duration: `random(${4 + index}, ${7 + index})`,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true
+      });
+    });
+  };
+
+  // 初始化所有动画
+  initScrollAnimations();
+});
+
 </script>
+
 <template>
   <div class="container">
     <img class="banner" src="@/assets/images/timeline/bg.png"> </img>
     <div class="memorabilia">大事记</div>
     <div class="route">
       <template v-for="(item, index) in timelineList" :key="index">
-        <div class="timeline-item item-left" v-if="index % 2 !== 0">
+        <div class="timeline-item item-left" v-if="index % 2 != 0">
           <div class="timeline-item-name">
             <div class="text">{{ item.name }} </div>
             <img class="icon-2" src="@/assets/images/timeline/point2.png"></img>
@@ -49,6 +211,7 @@ const timelineList = ref([
           <div class="timeline-item-content">{{ item.content }}</div>
         </div>
       </template>
+
       <div class="card card_1">
         <img class="card-img" src="@/assets/images/timeline/building.png">
       </div>
@@ -73,6 +236,7 @@ const timelineList = ref([
     </div>
   </div>
 </template>
+
 <style scoped lang="scss">
 .container {
   background-color: #F4F1EB;
@@ -134,14 +298,17 @@ const timelineList = ref([
       height: 432px;
     }
   }
+
   .card_1 {
     top: 880px;
     left: 220px;
   }
+
   .card_2 {
     top: 2035px;
     left: -20px;
   }
+
   .card_3 {
     top: 3100px;
     left: 370px;
@@ -306,6 +473,7 @@ const timelineList = ref([
     .text {
       width: 414px;
     }
+
     .timeline-item-content {
       margin-right: 286px;
     }
@@ -374,6 +542,78 @@ const timelineList = ref([
   img {
     width: 100%;
     height: 100%;
+  }
+}
+
+.timeline-item {
+  transform-origin: center;
+  will-change: transform, opacity;
+
+  &-content {
+    transform-origin: center;
+    will-change: transform, opacity, color;
+    transition: background-color 0.3s ease;
+  }
+
+  &-name {
+
+    .icon,
+    .icon-2 {
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    .line {
+      transform-origin: left center;
+      will-change: transform;
+    }
+  }
+}
+
+.card {
+  transform-origin: center;
+  will-change: transform;
+
+  &-img {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .card-img {
+    transform: scale(1.05);
+  }
+}
+
+// 添加平滑滚动
+html {
+  scroll-behavior: smooth;
+}
+
+// 优化视觉效果
+.route {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+// 添加渐变背景效果
+.timeline-item-content {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 107, 1, 0), rgba(255, 107, 1, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 4px;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 }
 </style>
