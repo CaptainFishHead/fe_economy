@@ -4,11 +4,13 @@ import type { Plugin } from 'vite' // 引入插件
 import { fileURLToPath } from 'url' // 处理路径
 import path from 'path' // 处理路径
 import { dirname, resolve } from 'path' // 处理路径
+
+import { visualizer } from 'rollup-plugin-visualizer' // 体积分析
+import compression from 'vite-plugin-compression' // gzip压缩
+
 import AutoImport from 'unplugin-auto-import/vite' // 自动引入
 import Components from 'unplugin-vue-components/vite' // 按需引入组件
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers' // 按需引入element-plus组件
-import { visualizer } from 'rollup-plugin-visualizer' // 体积分析
-import compression from 'vite-plugin-compression' // gzip压缩
 
 // 获取当前文件的路径和目录名
 const __filename = fileURLToPath(import.meta.url)
@@ -21,6 +23,7 @@ export default defineConfig(({ mode }) => {
   const env: any = loadEnv(mode, root)
 
   return {
+    lintOnSave: false,//关闭语法检查
     server: {
       host: '0.0.0.0',// 允许外部访问
       port: 8088,// 开发服务器端口
@@ -99,6 +102,11 @@ export default defineConfig(({ mode }) => {
       },
       optimizeDeps: {
         include: ['three', 'gsap'] // 优化依赖预构建
+      }
+    },
+    css: {
+      preprocessorOptions: {
+        scss: { api: 'modern-compiler' },
       }
     }
   }
