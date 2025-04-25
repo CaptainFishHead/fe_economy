@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+// import { ref } from 'vue';
 
 const trainingList = ref([
   {
@@ -100,7 +100,7 @@ const trainingList = ref([
   },
 ])
 
-
+const search = ref<string>('') // 搜索框的值
 
 const timelineData = ref([
   { year: '2020年', targetId: '2020' },
@@ -114,166 +114,157 @@ const currentActive = ref(-1); // 记录当前激活的时间轴索引
 // 时间轴点击处理
 const handleTimelineClick = (index, targetId) => {
   currentActive.value = index;
-  const element = document.getElementById(targetId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
 };
 </script>
 <template>
   <div class="container">
-    <div class="banner">
-      <div class="logo"></div>
-      <div class="hero-subtitle">实事求事</div>
-    </div>
-
-    <div class="content">
-      <img class="flower_1" src="@/assets/images/timeline/flower_1.png">
-      <img class="flower_2" src="@/assets/images/timeline/flower_3.png">
-
-      <div class="content-left">
-        <div class="training">
-          <div class="box">培训墙</div>
-        </div>
-        <div class="timeline">
-          <div class="timeline-item" :class="{ 'active-timeline': currentActive === index }"
-            v-for="(item, index) in timelineData" :key="index" @click="handleTimelineClick(index, item.targetId)">
-            {{ item.year }}></div>
+    <header class="header">
+      <!-- <el-image class="logo" src="@/assets/images/trainingWall/logo.png" /> -->
+      <!-- <el-input v-model="search" placeholder="请搜索班级名称" class="search">
+        <template #suffix>
+          <el-icon><el-search /></el-icon>
+        </template>
+</el-input> -->
+    </header>
+    <main class="content">
+      <div class="timeline">
+        <div class="item" :class="{ 'active-timeline': currentActive === index }" v-for="(item, index) in timelineData"
+          :key="index" @click="handleTimelineClick(index, item.targetId)">
+          <span>{{ item.year }}</span>
         </div>
       </div>
-      <div class="content-main">
+
+      <div class="photoList">
         <div class="item" v-for="(item, index) in trainingList" :key="index">
           <img class="item-img" :src="item.url">
-          <div class="item-box">
-            <div class="title">{{ item.time }}</div>
-            <div class="unit"> <el-icon :size="20" color="#409efc">
-                <CaretBottom />
-              </el-icon>{{ item.unit }}</div>
-            <div class="nameClass">{{ item.nameClass }}</div>
-          </div>
+          <div class="title">{{ item.time }}</div>
         </div>
       </div>
-
-    </div>
+    </main>
+    <img src="@/assets/images/trainingWall/roof.png" class="roof">
+    <img src="@/assets/images/trainingWall/bouquet_left.png" class="bouquet_left">
+    <img src="@/assets/images/trainingWall/bouquet_right.png" class="bouquet_right">
   </div>
 
 
 </template>
 <style scoped lang="scss">
-.banner {
-  width: 100%;
-  height: 460px;
-  background: url("@/assets/images/timeline/bg.png");
-  position: relative;
-
-  .logo {
-    width: 301px;
-    height: 70px;
-    background-color: antiquewhite;
-    position: absolute;
-    top: 62px;
-    left: 350px;
-
-  }
-
-  .hero-subtitle {
-    width: 86px;
-    height: 194px;
-    background: url('@/assets/images/home/question.png');
-    background-size: 100% 100%;
-    font-family: 'SJchunlian-Regular', sans-serif;
-    writing-mode: vertical-rl;
-    font-weight: 400;
-    font-size: 40px;
-    color: #FFFFFF;
-    text-align: center;
-    line-height: 87px;
-    position: absolute;
-    top: 150px;
-    right: 370px;
-  }
-}
-
-.content {
+.container {
   width: 100%;
   height: 100vh;
-  padding-left: 354px;
-  padding-right: 364px;
-  box-sizing: border-box;
+  background: url("@/assets/images/trainingWall/training_bj.png") no-repeat;
+  background-size: 100% 100%;
   position: relative;
-  display: flex;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
 
-
-  .flower_1 {
-    width: 321px;
-    height: 507px;
+  /* 标准语法 */
+  // overflow: hidden;
+  .roof {
+    width: 231px;
+    height: 225px;
     position: absolute;
-    top: 80px;
+    top: 0;
     left: 0;
   }
 
-  .flower_2 {
-    width: 346px;
-    height: 507px;
+  .bouquet_left {
+    width: 138px;
+    height: 301px;
     position: absolute;
-    top: 424px;
+    top: 221px;
+    left: 0;
+  }
+
+  .bouquet_right {
+    width: 167px;
+    height: 310px;
+    position: absolute;
+    top: 0;
     right: 0;
   }
-
-  &-left {
-    width: 232px;
-    height: 800px;
-
-    .training {
-      width: 152px;
-      height: 186px;
-      background: #A10914;
-      border-radius: 22px;
-      opacity: 0.8;
-      // 垂直水平居中
-      display: flex;
-      justify-content: center;
-      align-items: center;
+}
 
 
-      .box {
-        width: 123px;
-        height: 162px;
-        border-radius: 18px;
-        border: 1px dotted #FFFFFF;
-        writing-mode: vertical-rl;
-        font-family: 'SJchunlian-Regular', sans-serif;
-        text-align: center;
-        line-height: 123px;
-        font-weight: 400;
-        font-size: 41px;
-        color: #FFFFFF;
-        opacity: 0.8;
-      }
-    }
+.header {
+  width: 100%;
+  height: 108px;
+  // position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 
-    .timeline {
-      list-style: none;
-      padding: 0;
-      width: 80px;
-      text-align: center;
-    }
+  .logo {
+    width: 248px;
+    height: 58px;
+    // position: absolute;
+    // top: 25px;
+    // left: 298px;
+  }
 
-    .timeline-item {
-      padding: 15px 0;
+  .search {
+    width: 375px;
+    height: 48px;
+
+    // .el-input__wrapper {
+    //   box-shadow: -4px 3px 23px 6px #DBDBDB;
+    //   border-radius: 24px;
+    // }
+
+    // .el-input__suffix .el-input__icon {
+    //   font-size: 33px;
+    // }
+  }
+}
+
+
+.content {
+  width: 100%;
+  height: calc(100vh - 108px);
+  padding-left: 143px;
+  padding-right: 205px;
+  padding-bottom: 64px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+
+  .timeline {
+    margin-right: 44px;
+
+    .item {
+      width: 141px;
+      height: 281px;
+      background: url("@/assets/images/trainingWall/border.png") no-repeat;
+      background-size: 100% 100%;
       cursor: pointer;
-      border-bottom: 1px solid #ccc;
       transition: all 0.3s ease;
+      text-align: center;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      font-size: 30px;
+      color: #341004;
+      padding: 68px 44px 0 31px;
+      position: relative;
     }
 
-    .timeline-item .active-timeline {
+    .item:not(:first-child) {
+      top: -77px;
+    }
+
+    .active-timeline {
       color: #B71F1F;
-      font-weight: bold;
-      transform: scale(1.05);
+      background: url("@/assets/images/trainingWall/border_selected.png") no-repeat;
+      background-size: 100% 100%;
     }
   }
 
-  &-main {
+  .photoList {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -281,40 +272,33 @@ const handleTimelineClick = (index, targetId) => {
     justify-content: space-between;
     padding-top: 48px;
 
-
-
     .item {
       box-sizing: border-box;
-      width: calc(100% / 3 - 4px);
-      height: 300px;
-      background: #F8F8F8;
-      box-shadow: 0px 7px 20px 1px #EEEEEF;
-      border: 1px solid #F2F1F1;
+      width: calc(100% / 4 - 9px);
+      height: 263px;
       margin-bottom: 16px;
+      background: url("@/assets/images/trainingWall/card.png") no-repeat;
+      background-size: 100% 100%;
+      position: relative;
+      z-index: 1000 !important;
+      overflow: hidden;
+      padding: 0 8px;
 
       &-img {
         width: 100%;
-        height: 172px;
+        height: 207px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10 !important;
       }
 
-      &-box {
-        height: 125px;
+      .title {
         font-family: Source Han Sans CN;
         font-weight: 400;
-        font-size: 16px;
-        color: #232222;
-        padding: 0 35px;
-        padding-top: 22px;
-
-        .title {}
-
-        .unit {
-          text-align: center;
-        }
-
-        .nameClass {
-          text-align: center;
-        }
+        font-size: 21px;
+        color: #F8F7F6;
+        text-align: center;
       }
     }
   }
