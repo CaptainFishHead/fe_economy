@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import ScrollMagic from 'scrollmagic';
@@ -9,32 +9,152 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 const timelineList = ref([
-  { name: '1946~1950年', content: '经济学院的前身可以溯源至1946年华北联合大学设立的财经系，该系于1947年改称经济学系，系主任先后为何干之（兼）和宋涛。1950年，成立国民经济计划系。' },
-  { name: '1956年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
-  { name: '1957年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
-  { name: '1960年', content: '1960年，经济系更名为政治经济学系。从1956年到60年代初的一段时期里，在经济系学习的学生、研究生达800多人，包括教职工' },
-  { name: '1960~1962年', content: '1960年，国民经济计划系与统计系合并成立计划经济系；1961年，经济地理专业和运输经济专业并入计划经济系；1962年运输经济' },
-  { name: '1981年', content: '1981年，政治经济学、世界经济被教育部批准为全国首批学位授权点。' },
-  { name: '1983年', content: '1983年，计划统计学院成立，下辖统计系和计划经济学系。' },
-  { name: '1984年', content: '1984年，中国人民大学经济学研究所成立，所长先后为余学本和胡乃武。同年，西方经济学教研室分别获得外国经济思想史（含西方经济学方向）硕士和学位授予权，是最早获得这两个学位点的单位之一。' },
-  { name: '1985年', content: '1985年，政治经济学系改名为经济学系。同年，中国经济史、外国经济史硕士点先后设立。' },
-  { name: '1988年', content: '1988年，在原经济学系世界经济专业基础上成立国际经济系，下设国际经济专业和太平洋经济研究所。' },
-  { name: '1992年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
-  { name: '1993年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
-  { name: '1996年', content: '1996年，中国经济改革与发展研究院成立并于1999年12月被批准为"教育部人文社会科学百所重点研究基地"。' },
-  { name: '1998年', content: '1998年，国务院学位委员会批准中国人民大学申报理论经济学一级学科学位授权。同年，经济学系、国际经济系和经济学研究所合并成经济学院。' },
-  { name: '2006年', content: '2006年，国民经济管理系并入经济学院。' },
-  { name: '2010年', content: '2010年，区域与城市经济研究所并入经济学院。' },
-  { name: '2011年', content: '2011年，经济学院设立能源经济系，国际经济系设立国际商务硕士专业学位。' },
-  { name: '2004、2008、2012、2016年', content: '2004、2008、2012、2016年，经济学院理论经济学、应用经济学一级学科连续四届教育部学科评估排名全国第一。' },
-  { name: '2017年', content: '2017年，在经国务院批准下发的《关于公布世界一流大学和一流学科建设高校及建设学科名单的通知》中，理论经济学入选A+类学科名单。' },
-  { name: '2019年', content: '2019年，经济学院重组改革、踏上了崭新的历史阶段。' },
+  { id: '1', name: '1946~1950年', content: '经济学院的前身可以溯源至1946年华北联合大学设立的财经系，该系于1947年改称经济学系，系主任先后为何干之（兼）和宋涛。1950年，成立国民经济计划系。' },
+  { id: '2', name: '1956年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
+  { id: '3', name: '1957年', content: '1957年，世界经济教研室成立，隶属于经济系，由吴大琨任教研室主任。' },
+  { id: '4', name: '1960年', content: '1960年，经济系更名为政治经济学系。从1956年到60年代初的一段时期里，在经济系学习的学生、研究生达800多人，包括教职工' },
+  { id: '5', name: '1960~1962年', content: '1960年，国民经济计划系与统计系合并成立计划经济系；1961年，经济地理专业和运输经济专业并入计划经济系；1962年运输经济' },
+  { id: '6', name: '1981年', content: '1981年，政治经济学、世界经济被教育部批准为全国首批学位授权点。' },
+  { id: '7', name: '1983年', content: '1983年，计划统计学院成立，下辖统计系和计划经济学系。' },
+  { id: '8', name: '1984年', content: '1984年，中国人民大学经济学研究所成立，所长先后为余学本和胡乃武。同年，西方经济学教研室分别获得外国经济思想史（含西方经济学方向）硕士和学位授予权，是最早获得这两个学位点的单位之一。' },
+  { id: '9', name: '1985年', content: '1985年，政治经济学系改名为经济学系。同年，中国经济史、外国经济史硕士点先后设立。' },
+  { id: '10', name: '1988年', content: '1988年，在原经济学系世界经济专业基础上成立国际经济系，下设国际经济专业和太平洋经济研究所。' },
+  { id: '11', name: '1992年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
+  { id: '12', name: '1993年', content: '1993年，国务院学位委员会同意中国人民大学自行审批设立国际贸易硕士学位。同时，国务院学位办决定设立西方经济学硕士和博士点，西方经济学教研室又分别于1993年和1996年获得西方经济学硕士和学位授予权。' },
+  { id: '13', name: '1996年', content: '1996年，中国经济改革与发展研究院成立并于1999年12月被批准为"教育部人文社会科学百所重点研究基地"。' },
+  { id: '14', name: '1998年', content: '1998年，国务院学位委员会批准中国人民大学申报理论经济学一级学科学位授权。同年，经济学系、国际经济系和经济学研究所合并成经济学院。' },
+  { id: '15', name: '2006年', content: '2006年，国民经济管理系并入经济学院。' },
+  { id: '16', name: '2010年', content: '2010年，区域与城市经济研究所并入经济学院。' },
+  { id: '17', name: '2011年', content: '2011年，经济学院设立能源经济系，国际经济系设立国际商务硕士专业学位。' },
+  { id: '18', name: '2004、2008、2012、2016年', content: '2004、2008、2012、2016年，经济学院理论经济学、应用经济学一级学科连续四届教育部学科评估排名全国第一。' },
+  { id: '19', name: '2017年', content: '2017年，在经国务院批准下发的《关于公布世界一流大学和一流学科建设高校及建设学科名单的通知》中，理论经济学入选A+类学科名单。' },
+  { id: '20', name: '2019年', content: '2019年，经济学院重组改革、踏上了崭新的历史阶段。' },
 ])
+const scrollPosition = ref(0);
+const thumbPosition = ref(0);
+const thumbHeight = ref(0);
+const isDragging = ref(false);
+const containerHeight = ref(0);
+const contentHeight = ref(0);
+const isInViewport = ref(false);
+const lastInViewport = ref(false);
+const startDrag = (e) => {
+  isDragging.value = true;
+  const startY = e.clientY;
+  const startPosition = thumbPosition.value;
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging.value) {
+      const dy = e.clientY - startY;
+      const newPosition = startPosition + dy;
+      const minPosition = 0;
+      const maxPosition = containerHeight.value - thumbHeight.value;
+      thumbPosition.value = Math.min(Math.max(newPosition, minPosition), maxPosition);
+      const scrollRatio = thumbPosition.value / (containerHeight.value - thumbHeight.value);
+      scrollPosition.value = scrollRatio * (contentHeight.value - containerHeight.value);
+    }
+  });
+  document.addEventListener('mouseup', () => {
+    isDragging.value = false;
+    document.removeEventListener('mousemove', () => { });
+    document.removeEventListener('mouseup', () => { });
+  });
+};
+
+const standardRef = ref(null);
+const handleScroll = () => {
+  const card_3 = document.querySelector('.card_3');
+  const rect = card_3.getBoundingClientRect();
+  isInViewport.value = rect.bottom <= window.innerHeight;
+  if (lastInViewport.value != isInViewport.value) {
+    lastInViewport.value = isInViewport.value;
 
 
+    if (isInViewport.value) {
+      gsap.to(standardRef.value, {
+        x: 200, // 向右移动 200px
+        opacity: 0, // 透明度为 0
+        duration: 0.5, // 动画持续时间
+        ease: 'power2.out',
+        onComplete: () => {
+          standardRef.value.classList.remove('standard');
 
+          setTimeout(() => {
+            gsap.to(standardRef.value, {
+              x: 0,
+              opacity: 0,
+              onComplete: () => {
+                standardRef.value.classList.add('standard-left');
+                gsap.to(standardRef.value, {
+                  opacity: 1,
+                })
+                standardRef.value.classList.add('show');
+              }
+            });
+          }, 500)
+        }
+      });
+    } else {
+      standardRef.value.classList.remove('show');
+      setTimeout(() => {
+        standardRef.value.classList.remove('standard-left');
+        standardRef.value.classList.add('standard');
+        gsap.to('.standard', {
+          x: 0,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      }, 500)
+
+    }
+  }
+  // if (isInViewport.value != lastInViewport.value) {
+  //   lastInViewport.value = isInViewport.value;
+  //   if (isInViewport.value) {
+  //     gsap.to(standardRef.value, {
+  //       x: 200, // 向右移动 200px
+  //       opacity: 0, // 透明度为 0
+  //       duration: 0.5, // 动画持续时间
+  //       ease: 'power2.out',
+  //     });
+  //   } else {
+  //     gsap.to(standardRef.value, {
+  //       x: 0,
+  //       opacity: 1,
+  //       duration: 0.5,
+  //       ease: 'power2.out'
+  //     });
+  //   }
+  //   setTimeout(() => {
+  //     // if (standardRef.value.className == 'standard-left') {
+  //     //   gsap.to(standardRef.value, {
+  //     //     x: -200,
+  //     //     opacity: 0,
+  //     //     duration: 0.8,
+  //     //     ease: 'power2.out',
+  //     //     onComplete: () => {
+  //     //       gsap.to(standardRef.value, {
+  //     //         x: 0,
+  //     //         opacity: 1,
+  //     //         duration: 1.2,
+  //     //         ease: 'power2.out'
+  //     //       });
+  //     //     }
+  //     //   });
+  //     // }
+  //     console.log(standardRef.value.className);
+  //   }, 1500)
+  // }
+};
 
 onMounted(() => {
+  // 锚点滚动区域
+  const timelineContainer = document.querySelector('.timeline-container');
+  const timelineContent = document.querySelector('.timeline-content');
+  containerHeight.value = timelineContainer.offsetHeight; // 获取容器高度
+  contentHeight.value = timelineContent.offsetHeight; // 获取内容高度
+  thumbHeight.value = (containerHeight.value / contentHeight.value) * containerHeight.value;
+  window.addEventListener('scroll', handleScroll);
   gsap.registerPlugin(ScrollTrigger);
 
   // 设置默认缓动
@@ -42,17 +162,155 @@ onMounted(() => {
     ease: "power2.out"
   });
 
+  // // 获取首屏可见元素
+  // const getVisibleElements = () => {
+  //   const viewportHeight = window.innerHeight;
+  //   const elements = {
+  //     timelineItems: [],
+  //     cards: [],
+  //     flowers: []
+  //   };
+
+  //   document.querySelectorAll('.timeline-item').forEach(item => {
+  //     const rect = item.getBoundingClientRect();
+  //     if (rect.top < viewportHeight) {
+  //       elements.timelineItems.push(item);
+  //     }
+  //   });
+
+  //   document.querySelectorAll('.card').forEach(card => {
+  //     const rect = card.getBoundingClientRect();
+  //     if (rect.top < viewportHeight) {
+  //       elements.cards.push(card);
+  //     }
+  //   });
+
+  //   document.querySelectorAll('.flower_1, .flower_2, .flower_3, .flower_4').forEach(flower => {
+  //     const rect = flower.getBoundingClientRect();
+  //     if (rect.top < viewportHeight) {
+  //       elements.flowers.push(flower);
+  //     }
+  //   });
+
+  //   return elements;
+  // };
+
+  // // 首屏动画序列
+  // const initFirstScreen = () => {
+  //   const tl = gsap.timeline({
+  //     delay: 0.3,
+  //     onComplete: () => initScrollAnimations()
+  //   });
+
+  //   // 预先隐藏所有元素
+  //   gsap.set(['.banner', '.memorabilia', '.timeline-item', '.card', '.flower_1, .flower_2, .flower_3, .flower_4'], {
+  //     opacity: 0,
+  //     visibility: 'hidden'
+  //   });
+
+  //   // 背景动画
+  //   tl.to('.banner', {
+  //     opacity: 1,
+  //     visibility: 'visible',
+  //     scale: 1,
+  //     duration: 2,
+  //     ease: "power2.inOut"
+  //   })
+  //     // 标题动画
+  //     .to('.memorabilia', {
+  //       opacity: 1,
+  //       visibility: 'visible',
+  //       scale: 1,
+  //       y: 0,
+  //       rotationX: 0,
+  //       duration: 1.5,
+  //       ease: "elastic.out(1, 0.5)"
+  //     }, "-=1.5");
+  //   // 获取首屏可见元素
+  //   const visibleElements = getVisibleElements();
+  //   // 首屏时间轴项目动画
+  //   visibleElements.timelineItems.forEach((item, index) => {
+  //     const isLeft = item.classList.contains('item-left');
+  //     const content = item.querySelector('.timeline-item-content');
+  //     const name = item.querySelector('.timeline-item-name');
+  //     const icons = item.querySelectorAll('.icon, .icon-2');
+  //     const line = item.querySelector('.line');
+
+  //     tl.to(item, {
+  //       opacity: 1,
+  //       visibility: 'visible',
+  //       x: 0,
+  //       y: 0,
+  //       rotateY: 0,
+  //       scale: 1,
+  //       duration: 1.2,
+  //       ease: "back.out(1.7)",
+  //     }, `-=${index ? 0.8 : 0}`)
+  //       .to(name, {
+  //         opacity: 1,
+  //         visibility: 'visible',
+  //         x: 0,
+  //         scale: 1,
+  //         duration: 0.8,
+  //       }, "-=0.8")
+  //       .to(content, {
+  //         opacity: 1,
+  //         visibility: 'visible',
+  //         y: 0,
+  //         scale: 1,
+  //         duration: 0.8,
+  //         ease: "power4.out"
+  //       }, "-=0.6")
+  //       .to(icons, {
+  //         opacity: 1,
+  //         visibility: 'visible',
+  //         scale: 1,
+  //         rotation: 0,
+  //         duration: 0.6,
+  //         stagger: 0.2,
+  //         ease: "back.out(2)"
+  //       }, "-=0.6")
+  //       .to(line, {
+  //         opacity: 1,
+  //         visibility: 'visible',
+  //         scaleX: 1,
+  //         duration: 0.8,
+  //         ease: "power2.inOut"
+  //       }, "-=0.8");
+  //   });
+
+  //   // 首屏卡片和装饰元素动画
+  //   [...visibleElements.cards, ...visibleElements.flowers].forEach((el, index) => {
+  //     tl.to(el, {
+  //       opacity: 1,
+  //       visibility: 'visible',
+  //       y: 0,
+  //       scale: 1,
+  //       rotation: 0,
+  //       duration: 1.2,
+  //       ease: "power3.out"
+  //     }, `-=${index ? 0.9 : 0}`);
+  //   });
+  // };
+
+
   // 滚动动画初始化
   const initScrollAnimations = () => {
+
+    gsap.set(['.banner', '.memorabilia', '.timeline-item', '.card', '.flower_1, .flower_2, .flower_3, .flower_4'], {
+      opacity: 1,
+      visibility: 'visible'
+    });
+
     // 时间轴项目动画
     const timelineItems = gsap.utils.toArray('.timeline-item');
-    timelineItems.forEach((item: Element) => {
+    timelineItems.forEach((item: Element, index: number) => {
       const isLeft = item.classList.contains('item-left');
       const content = item.querySelector('.timeline-item-content');
       const name = item.querySelector('.timeline-item-name');
       const icons = item.querySelectorAll('.icon, .icon-2');
       const line = item.querySelector('.line');
-
+      if (index < 4) return
       const itemTimeline = gsap.timeline({
         scrollTrigger: {
           trigger: item,
@@ -115,28 +373,62 @@ onMounted(() => {
         }, "-=0.8");
     });
 
+    // 底部触发器
+    ScrollTrigger.create({
+      trigger: ".route",
+      start: "bottom bottom+=500", // 提前触发
+      end: "bottom top", // 提前触发
+      scrub: 1.5, // 平滑过渡
+      onEnter: () => {
+        // 确保底部元素完全显示
+        const bottomElements = Array.from(document.querySelectorAll('.timeline-item')).slice(-2);
+        gsap.to(bottomElements, {
+          opacity: 1,
+          visibility: 'visible',
+          y: 0,
+          scale: 1,
+          duration: 1,
+          stagger: 0.2,
+          ease: "power3.out",
+          onComplete: () => {
+            // 确保所有子元素都显示
+            bottomElements.forEach(item => {
+              gsap.to(item.querySelectorAll('.timeline-item-content, .timeline-item-name, .icon, .icon-2, .line'), {
+                opacity: 1,
+                visibility: 'visible',
+                y: 0,
+                scale: 1,
+                duration: 0.5,
+                stagger: 0.1
+              });
+            });
+          }
+        });
+      }
+    });
     // 卡片动画
     const cards = gsap.utils.toArray('.card');
     cards.forEach((card: Element, index: number) => {
+      if (index < 1) return
       gsap.fromTo(card,
         {
-          opacity: 0,
-          y: 50,
-          scale: 0.8,
+          opacity: 0, // 初始透明度
+          y: 50,  // 初始Y轴位移
+          scale: 0.8, // 初始缩放
           rotateX: 15
         },
         {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotateX: 0,
-          duration: 1.5,
+          opacity: 1, // 最终透明度
+          y: 0, // 最终Y轴位移
+          scale: 1,   // 最终缩放
+          rotateX: 0, // 最终旋转角度
+          duration: 1.5, // 动画持续时间
           scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-            end: "center center",
-            toggleActions: "restart none none reverse",
-            scrub: 2
+            trigger: card, // 触发器元素
+            start: "top 85%",  // 触发位置
+            end: "center center",   // 触发位置
+            toggleActions: "restart none none reverse", // 重复触发
+            scrub: 2    // 平滑过渡
           }
         }
       );
@@ -179,9 +471,12 @@ onMounted(() => {
       });
     });
   };
-
+  // initFirstScreen()
   // 初始化所有动画
   initScrollAnimations();
+});
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 
 </script>
@@ -192,7 +487,7 @@ onMounted(() => {
     <div class="memorabilia">大事记</div>
     <div class="route">
       <template v-for="(item, index) in timelineList" :key="index">
-        <div class="timeline-item item-left" v-if="index % 2 != 0">
+        <div class="timeline-item item-left" v-if="index % 2 != 0" :id="item.id">
           <div class="timeline-item-name">
             <div class="text">{{ item.name }} </div>
             <img class="icon-2" src="@/assets/images/timeline/point2.png"></img>
@@ -201,7 +496,7 @@ onMounted(() => {
           </div>
           <div class="timeline-item-content">{{ item.content }}</div>
         </div>
-        <div class="timeline-item item-right" v-else>
+        <div class="timeline-item item-right" v-else :id="item.id">
           <div class="timeline-item-name">
             <img class="icon" src="@/assets/images/timeline/point.png"></img>
             <div class="line"></div>
@@ -234,6 +529,22 @@ onMounted(() => {
     <div class="flower_4">
       <img src="@/assets/images/timeline/flower_4.png">
     </div>
+    <div class="standard" ref="standardRef">
+      <img class="standard-img" src="@/assets/images/timeline/standard.png">
+      <div class="timeline-container">
+        <div class="timeline-content" :style="{ transform: `translateY(-${scrollPosition}px)` }">
+          <div class="time" v-for="(item, index) in timelineList" :key="index">
+            <a :href="'#' + item.id">{{ item.name }}</a>
+          </div>
+        </div>
+      </div>
+      <div class="scrollbar-container">
+        <div class="scrollbar-track">
+          <div class="scrollbar-thumb" :style="{ top: thumbPosition + 'px', height: thumbHeight + 'px' }"
+            @mousedown="startDrag"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -243,8 +554,135 @@ onMounted(() => {
   height: 100%;
   width: 100%;
   position: relative;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
+  /* 标准语法 */
   // overflow: hidden;
 }
+
+.standard {
+  position: fixed;
+  top: 150px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: right 0.5s ease, opacity 0.5s ease;
+
+  .standard-img {
+    max-width: 74px;
+    max-height: 690px;
+    position: absolute;
+    bottom: -2px;
+    left: 60px;
+  }
+}
+
+.standard-left {
+  position: fixed;
+  top: 150px;
+  left: -230px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row-reverse;
+  z-index: 1000;
+  transition: left 0.8s ease, opacity 0.8s ease;
+  opacity: 0;
+
+  .standard-img {
+    max-width: 74px;
+    max-height: 690px;
+    position: absolute;
+    bottom: -2px;
+    right: 60px;
+  }
+}
+
+.show {
+  left: 0;
+  opacity: 1;
+  transition: left 0.8s ease, opacity 0.8s ease;
+}
+
+.timeline-container {
+  width: 150px;
+  height: 597px;
+  overflow: hidden;
+
+  .timeline-content {
+    transition: transform 0.2s ease;
+
+    .time {
+      width: 140px;
+      height: 48px;
+      background: #556F98;
+      border-radius: 30px 0 30px 0;
+      margin-bottom: 13px;
+      text-align: center;
+      // line-height: 48px;
+      font-family: Source Han Serif CN, sans-serif;
+      font-weight: bold;
+      font-size: 16px;
+      color: #FFFFFF;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      ， &:nth-child(3n + 1) {
+        background: #556F98;
+      }
+
+      &:nth-child(3n + 2) {
+        background: #972F2F;
+      }
+
+      &:nth-child(3n) {
+        background: #AC5833;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    }
+  }
+
+}
+
+.scrollbar-container {
+  width: 12px;
+  height: 597px;
+  background: #AC5833;
+  border-radius: 5px 6px 7px 6px;
+  margin: 0 30px;
+
+  .scrollbar-track {
+    position: relative;
+    height: 100%;
+
+    .scrollbar-thumb {
+      position: absolute;
+      width: 100%;
+      width: 12px;
+      height: 95px;
+      background: #556F98;
+      border-radius: 5px 5px 6px 5px;
+      cursor: pointer;
+    }
+  }
+}
+
+
+
+
+
 
 .banner {
   width: 100%;

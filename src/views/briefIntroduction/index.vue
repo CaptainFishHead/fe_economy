@@ -202,7 +202,7 @@ onMounted(() => {
   }
 
   // 添加视差滚动效果
-  const parallaxElements = ['.mountain1', '.mountain2', '.mountain3', '.mountain4', '.mountain5'];
+  const parallaxElements = ['.mountain1', '.mountain2', '.mountain3', '.mountain4'];
   parallaxElements.forEach((selector, index) => {
     gsap.to(selector, {
       scrollTrigger: {
