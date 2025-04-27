@@ -8,10 +8,6 @@ import { dirname, resolve } from 'path' // 处理路径
 import { visualizer } from 'rollup-plugin-visualizer' // 体积分析
 import compression from 'vite-plugin-compression' // gzip压缩
 
-import AutoImport from 'unplugin-auto-import/vite' // 自动引入
-import Components from 'unplugin-vue-components/vite' // 按需引入组件
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers' // 按需引入element-plus组件
-
 // 获取当前文件的路径和目录名
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -50,13 +46,6 @@ export default defineConfig(({ mode }) => {
         algorithm: 'brotliCompress', // 使用 Brotli 压缩算法
         ext: '.br' // 压缩文件扩展名
       }) as Plugin,
-      AutoImport({
-        imports: ['vue', 'vue-router'], // 自动引入 Vue 和 Vue Router
-        resolvers: [ElementPlusResolver()] // 自动引入 Element Plus
-      }),
-      Components({
-        resolvers: [ElementPlusResolver()] // 按需引入 Element Plus 组件
-      })
     ],
     resolve: {
       alias: {

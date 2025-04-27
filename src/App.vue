@@ -19,7 +19,6 @@ import TheHeader from './components/TheHeader.vue'
 }
 
 .main {
-  // padding-top: 80px;
   flex: 1;
 }
 </style>

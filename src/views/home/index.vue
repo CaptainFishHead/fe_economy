@@ -52,8 +52,7 @@
 import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import TypeIt from 'typeit'
-
-import router from "@/router/index";
+import { useRouter } from 'vue-router'
 
 let box1 = ref(null)
 let box2 = ref(null)
@@ -61,6 +60,7 @@ let box3 = ref(null)
 let box4 = ref(null)
 let star4 = ref(null)
 const typeit = ref(null)
+const router = useRouter()
 function toBriefIntro() {
   router.push({ path: '/briefIntroduction' })
 }
