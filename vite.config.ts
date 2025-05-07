@@ -19,7 +19,6 @@ export default defineConfig(({ mode }) => {
   const env: any = loadEnv(mode, root)
 
   return {
-    lintOnSave: false,//关闭语法检查
     server: {
       host: '0.0.0.0',// 允许外部访问
       port: 8088,// 开发服务器端口
@@ -28,13 +27,13 @@ export default defineConfig(({ mode }) => {
         '/dev': {
           target: env.VITE_APP_BASE_URL, // 目标地址
           changeOrigin: true,// 是否改变源
-          rewrite: path => path.replace(/^\/api/, '') // 重写路径
+          rewrite: path => path.replace(/^\/dev/, '') // 重写路径
         },
         // 生产环境代理配置
         '/pro': {
           target: env.VITE_APP_BASE_URL,
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, '')
+          rewrite: path => path.replace(/^\/pro/, '')
         }
       }
     },

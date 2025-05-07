@@ -32,6 +32,9 @@ importers:
       gsap:
         specifier: ^3.12.7
         version: 3.12.7
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       pinia:
         specifier: ^3.0.2
         version: 3.0.2(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
@@ -50,6 +53,9 @@ importers:
       stats.js:
         specifier: ^0.17.0
         version: 0.17.0
+      swiper:
+        specifier: ^11.2.6
+        version: 11.2.6
       three:
         specifier: ^0.159.0
         version: 0.159.0
@@ -1658,6 +1664,10 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  swiper@11.2.6:
+    resolution: {integrity: sha512-8aXpYKtjy3DjcbzZfz+/OX/GhcU5h+looA6PbAzHMZT6ESSycSp9nAjPCenczgJyslV+rUGse64LMGpWE3PX9Q==}
+    engines: {node: '>= 4.7.0'}
 
   tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
@@ -3352,6 +3362,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swiper@11.2.6: {}
 
   tailwindcss@3.4.17:
     dependencies:
