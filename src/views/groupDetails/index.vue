@@ -5,18 +5,27 @@ import { useRoute } from 'vue-router'
 import { gsap } from 'gsap'
 
 
+const aimingPointData = ref([
+  { name: '上课照片', id: 'attend' },
+  { name: '教师风采', id: 'teacher' },
+  { name: '结业视频', id: 'completionVideo' },
+  { name: '档案资料', id: 'materials' },
+])
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 const route = useRoute()
 const photoId = ref<string>('4')
-const photoCover = ref<string>('/src/assets/images/groupDetails/groupPhoto.png')
-
-
+const photoCover = ref<string>('')
 onMounted(() => {
-  // photoId.value = route.query.id as string;
-  // photoCover.value = route.query.image as string;
+  photoId.value = route.query.id as string;
+  photoCover.value = route.query.image as string;
   getPClassPhotoData()
   getClassTeacherData()
-
 })
 
 
@@ -75,28 +84,41 @@ const defaultTeacher = ref({
 }) // 默认教师数据
 const getClassTeacherData = () => {
   getClassTeacherList(photoQuery.value).then(res => {
-    console.log(res, '教师风采数据');
     teacherData.value = res.data
     defaultTeacher.value = teacherData.value[0]
   })
 }
 
 // 结业视频数据
-const accordionItems = ref([
-  { title: '中国铁建投资集团有限公司第一期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
-  { title: '中国铁建投资集团有限公司第二期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
-  { title: '中国铁建投资集团有限公司第三期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
-  { title: '中国铁建投资集团有限公司第四期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' }
-]);
+// const accordionItems = ref([
+//   { title: '中国铁建投资集团有限公司第一期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
+//   { title: '中国铁建投资集团有限公司第二期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
+//   { title: '中国铁建投资集团有限公司第三期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' },
+//   { title: '中国铁建投资集团有限公司第四期青年英才暨青马工程培训班结业视频', url: 'http://hxoss.huixianxt.com/p5Camm5pHGT8pNjbPZ.mp4' }
+// ]);
 
-// const accordionItems = ref([])
+const accordionItems = ref([])
 const lastIndex = ref<number>(0)
+const aboutVideoRef = ref<HTMLVideoElement[]>([]);
+const showPlay = ref<boolean>(false);
 const getClassVideoData = () => {
   getClassVideoList({
     class_id: '576'
   }).then(res => {
-    console.log(res, '结业视频数据');
-    // accordionItems.value = res.data
+    accordionItems.value = res.data
+    lastIndex.value = accordionItems.value.length - 1;
+    console.log(lastIndex.value);
+
+    nextTick(() => {
+      const firstItem = document.querySelectorAll('.accordion-item')[lastIndex.value];
+      const firstVideo = firstItem.querySelector('.accordion-video');
+      if (aboutVideoRef.value[lastIndex.value].paused) {
+        aboutVideoRef.value[lastIndex.value].play();
+        showPlay.value = false;
+      }
+      gsap.to(firstItem, { width: '1344px', marginRight: '100px', duration: 0.5 });
+      gsap.to(firstVideo, { width: '1024px', duration: 0.5 });
+    });
   })
 }
 const handleMouseEnter = (index: number) => {
@@ -118,7 +140,7 @@ const handleMouseEnter = (index: number) => {
   });
 };
 const handleMouseLeave = (index: number) => {
-  if (index === lastIndex.value) {
+  if (index == lastIndex.value) {
     return;
   }
   const targetItem = document.querySelectorAll('.accordion-item')[index];
@@ -126,17 +148,14 @@ const handleMouseLeave = (index: number) => {
   gsap.to(targetItem, { width: '320px', marginRight: '', duration: 0.5 });
   gsap.to(targetVideo, { width: '0px', duration: 0.5 });
 };
-// 视频元素引用
-const aboutVideoRef = ref<HTMLVideoElement[]>([]);
-// 控制播放图标的显示
-const showPlay = ref<boolean>(false);
-// 鼠标悬停事件处理函数
+
+
 const videoStatus = (index: number) => {
   if (aboutVideoRef.value[index].paused) {
     showPlay.value = true;
   }
 };
-// 播放视频函数
+
 const playVideo = (index: number) => {
   if (aboutVideoRef.value[index].paused) {
     aboutVideoRef.value[index].play();
@@ -146,17 +165,6 @@ const playVideo = (index: number) => {
 
 onMounted(() => {
   getClassVideoData()
-  lastIndex.value = accordionItems.value.length - 1;
-  if (lastIndex.value > 0) {
-    const firstItem = document.querySelectorAll('.accordion-item')[lastIndex.value];
-    const firstVideo = firstItem.querySelector('.accordion-video');
-    if (aboutVideoRef.value[lastIndex.value].paused) {
-      aboutVideoRef.value[lastIndex.value].play();
-      showPlay.value = false;
-    }
-    gsap.to(firstItem, { width: '1344px', marginRight: '100px', duration: 0.5 });
-    gsap.to(firstVideo, { width: '1024px', duration: 0.5 });
-  }
 });
 
 
@@ -242,10 +250,10 @@ const talentBreakpoints = {
 <template>
   <div class="container">
     <div class="display">
-      <img :src="photoCover" class="photo">
+      <el-image :src="photoCover" class="photo" v-if="photoCover" />
       <img src="@/assets/images/groupDetails/cloud.png" class="cloud">
     </div>
-    <div class="attend">
+    <div class="attend" id="attend">
       <div class="top">
         <div class="title">上课照片</div>
       </div>
@@ -263,7 +271,7 @@ const talentBreakpoints = {
         </div>
       </div>
     </div>
-    <div class="teacher">
+    <div class="teacher" id="teacher">
       <div class="top">
         <div class="title">教师风采</div>
       </div>
@@ -303,7 +311,7 @@ const talentBreakpoints = {
         </div>
       </div>
     </div>
-    <div class="completionVideo">
+    <div class="completionVideo" id="completionVideo">
       <img src="@/assets/images/groupDetails/flower2.png" class="flower2">
       <div class="top">
         <div class="title">结业视频</div>
@@ -330,7 +338,7 @@ const talentBreakpoints = {
         </div>
       </div>
     </div>
-    <div class="materials">
+    <div class="materials" id="materials">
       <img src="@/assets/images/groupDetails/flower3.png" class="flower3">
       <div class="top">
         <div class="title">档案资料</div>
@@ -357,6 +365,12 @@ const talentBreakpoints = {
         </div>
       </div>
     </div>
+
+    <div class="aimingPoint">
+      <div class="item" v-for="(item, index) in aimingPointData" :key="index" @click="scrollToSection(item.id)">
+        {{ item.name }}
+      </div>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -364,6 +378,27 @@ const talentBreakpoints = {
   width: 100%;
   height: 100%;
   padding-bottom: 30px;
+
+  .aimingPoint {
+    position: fixed;
+    top: 350px;
+    right: 78px;
+    z-index: 1000;
+
+    .item {
+      width: 187px;
+      height: 54px;
+      text-align: center;
+      line-height: 54px;
+      font-family: Adobe Heiti Std;
+      font-weight: normal;
+      font-size: 26px;
+      color: #FCF3D2;
+      background: url('@/assets/images/groupDetails/btn.png') no-repeat;
+      background-size: 100% 100%;
+      margin-bottom: 30px;
+    }
+  }
 }
 
 .display,
@@ -373,7 +408,7 @@ const talentBreakpoints = {
 .materials {
   width: 100%;
   height: 100%;
-  min-height: 1024px;
+  min-height: 1080px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -407,6 +442,8 @@ const talentBreakpoints = {
 
 .display {
   width: 100%;
+  height: 100%;
+  min-height: 1080px;
   position: relative;
 
   .photo {
