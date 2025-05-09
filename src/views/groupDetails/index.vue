@@ -407,8 +407,8 @@ const talentBreakpoints = {
 .completionVideo,
 .materials {
   width: 100%;
-  height: 100%;
-  min-height: 1080px;
+  height: 100vh;
+  // min-height: 1080px;
   display: flex;
   flex-direction: column;
   align-items: center;

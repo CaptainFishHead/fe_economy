@@ -1,5 +1,13 @@
 <template>
   <div class="home">
+    <div class="loading" v-if="homeLoading">
+      <div class="loading-box">
+        <img class="loading-title" src="@/assets/images/home/loading_title.png">
+        <div class="loading-introduce">
+          <span v-for="(item) in collegeFeatures">{{ item }}</span>
+        </div>
+      </div>
+    </div>
     <!-- 顶部部分 -->
     <section class="hero">
       <div class="hero-logo" v-motion-slide-visible-once-bottom></div>
@@ -53,7 +61,15 @@ import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import TypeIt from 'typeit'
 import { useRouter } from 'vue-router'
-
+const collegeFeatures = ref<string[]>([])
+const slicedString = (originalString: any) => {
+  const result = [];
+  for (let i = 0; i < originalString.length; i += 6) {
+    result.push(originalString.slice(i, i + 6));
+  }
+  return result;
+};
+collegeFeatures.value = slicedString('立足中国真实创新中国理论培养中国人才推动中国发展');
 let box1 = ref(null)
 let box2 = ref(null)
 let box3 = ref(null)
@@ -75,12 +91,16 @@ function toTrainingWall() {
 function platform() {
   router.push({ path: '/platform' })
 }
+const homeLoading = ref(true)
 onMounted(() => {
+  setTimeout(() => {
+    homeLoading.value = false
+  }, 1500)
   new TypeIt(typeit.value as any, {
     strings:
       '中国人民大学经济学院是新中国经济学科重要奠基者与开拓者，理论经济学在教育部学科评估中使用连续四次全国第一，为国家“双一流”建设学科。我们立足中国大地，致力于构建和创新中国经济学体系，推动中国经济社会发展。八十几年来，我们培养了一批又一批有知识、有理想、有情怀、有担当的经济学理论人才和现代化强国建设人才。',
     speed: 100, // 打字速度（单位：毫秒）
-    loop: true, // 是否循环
+    loop: false, // 是否循环
     lifeLike: true,
     waitUntilVisible: true,
     breakLines: false // 是否允许换行
@@ -178,6 +198,49 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @import '@/assets/fonts/fonts.css';
+
+.loading {
+  width: 100%;
+  height: 100vh;
+  background: url('@/assets/images/home/loading_bj.png') no-repeat;
+  background-size: 100% 100%;
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+
+  &-box {
+    position: absolute;
+    top: 54px;
+    right: 20%;
+  }
+
+
+  &-title {
+    width: 256px;
+    height: 624px;
+  }
+
+  &-introduce {
+    writing-mode: vertical-rl;
+    // height: 431px;
+    font-family: SourceHanSansCN-Normal;
+    font-weight: 400;
+    font-size: 32px;
+    color: #fff;
+    line-height: 60px;
+    opacity: 0.8;
+    display: flex;
+    flex-direction: column;
+
+    span {
+      padding: 10px 0;
+      display: inline-block;
+      border-right: 2px solid #fff;
+    }
+  }
+}
 
 .hero {
   min-height: 100vh;
@@ -398,5 +461,6 @@ onMounted(() => {
   -ms-user-select: none;
   /* IE10+/Edge */
   user-select: none;
+  position: relative;
 }
 </style>

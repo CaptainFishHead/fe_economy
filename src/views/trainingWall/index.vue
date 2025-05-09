@@ -93,7 +93,7 @@ onMounted(() => {
       <div class="photoList" v-loading="loading">
         <div class="item" v-for="(item) in trainingList" :key="item.id" @click="photoClick(item)">
           <div class="item-box">
-            <el-image class="img" :src="item.image" lazy />
+            <el-image class="img" :src="item.image + '?x-oss-process=image/format,webp/quality,q_70'" lazy />
             <div class="mask">
               <div class="title">{{ item.title }}</div>
               <div class="time">({{ item.year_month }})</div>

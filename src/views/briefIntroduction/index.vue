@@ -51,50 +51,104 @@ onMounted(() => {
   // getIntroListData()
 
   // 花瓣动画
-  const petals = document.querySelectorAll('[class^="petal"]');
-  petals.forEach((petal) => {
-    const clone = petal.cloneNode(true) as HTMLElement;
-    petal.parentElement?.appendChild(clone);
-  });
+  // const petals = document.querySelectorAll('[class^="petal"]');
+  // petals.forEach((petal) => {
+  //   const clone = petal.cloneNode(true) as HTMLElement;
+  //   petal.parentElement?.appendChild(clone);
+  // });
 
-  const allPetals = document.querySelectorAll('[class^="petal"]');
-  allPetals.forEach((petal) => {
-    const randomX = Math.random() * window.innerWidth;
-    const randomY = -Math.random() * 500;
-    (petal as HTMLElement).style.left = `${randomX}px`;
-    (petal as HTMLElement).style.top = `${randomY}px`;
+  // const allPetals = document.querySelectorAll('[class^="petal"]');
+  // allPetals.forEach((petal) => {
+  //   const randomX = Math.random() * window.innerWidth;
+  //   const randomY = -Math.random() * 500;
+  //   (petal as HTMLElement).style.left = `${randomX}px`;
+  //   (petal as HTMLElement).style.top = `${randomY}px`;
 
-    // 增强花瓣动画效果
-    anime({
-      targets: petal,
-      translateX: [
-        { value: (Math.random() - 0.5) * 300, duration: 3000 },
-        { value: (Math.random() - 0.5) * 500, duration: 3000 },
-        { value: (Math.random() - 0.5) * 300, duration: 3000 }
-      ],
-      translateY: [
-        { value: window.innerHeight * 0.5, duration: 3000 },
-        { value: window.innerHeight + 500, duration: 3000 }
-      ],
-      rotate: [
-        { value: Math.random() * 360, duration: 3000 },
-        { value: Math.random() * 720, duration: 3000 }
-      ],
-      scale: [
-        { value: Math.random() * 0.5 + 0.5, duration: 1500 },
-        { value: Math.random() * 0.3 + 0.2, duration: 1500 }
-      ],
-      opacity: [
-        { value: Math.random() * 0.5 + 0.5, duration: 1500 },
-        { value: 0, duration: 1500 }
-      ],
-      duration: Math.random() * 6000 + 4000,
-      delay: Math.random() * 2000,
-      loop: true,
-      easing: 'easeInOutSine',
-      direction: 'alternate'
-    });
-  });
+  //   // 增强花瓣动画效果
+  //   anime({
+  //     targets: petal,
+  //     translateX: [
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 500, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 }
+  //     ],
+  //     translateY: [
+  //       { value: window.innerHeight * 0.5, duration: 3000 },
+  //       { value: window.innerHeight + 500, duration: 3000 }
+  //     ],
+  //     rotate: [
+  //       { value: Math.random() * 360, duration: 3000 },
+  //       { value: Math.random() * 720, duration: 3000 }
+  //     ],
+  //     scale: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: Math.random() * 0.3 + 0.2, duration: 1500 }
+  //     ],
+  //     opacity: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: 0, duration: 1500 }
+  //     ],
+  //     duration: Math.random() * 6000 + 4000,
+  //     delay: Math.random() * 2000,
+  //     loop: true,
+  //     easing: 'easeInOutSine',
+  //     direction: 'alternate'
+  //   });
+  // });
+  //=====================================
+  // const petals = document.querySelectorAll('[class^="petal"]');
+  // petals.forEach((petal) => {
+  //   const clone = petal.cloneNode(true) as HTMLElement;
+  //   petal.parentElement?.appendChild(clone);
+  // });
+
+  // const createPetalAnimation = (petal) => {
+  //   const randomX = Math.random() * window.innerWidth;
+  //   const randomY = -Math.random() * 500;
+  //   (petal as HTMLElement).style.left = `${randomX}px`;
+  //   (petal as HTMLElement).style.top = `${randomY}px`;
+
+  //   // 花瓣飘动动画效果
+  //   anime({
+  //     targets: petal,
+  //     translateX: [
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 500, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 }
+  //     ],
+  //     translateY: [
+  //       { value: window.innerHeight * 0.5, duration: 3000 },
+  //       { value: window.innerHeight + 500, duration: 3000 }
+  //     ],
+  //     rotate: [
+  //       { value: Math.random() * 360, duration: 3000 },
+  //       { value: Math.random() * 720, duration: 3000 }
+  //     ],
+  //     scale: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: Math.random() * 0.3 + 0.2, duration: 1500 }
+  //     ],
+  //     opacity: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: 0, duration: 1500 }
+  //     ],
+  //     duration: Math.random() * 6000 + 4000,
+  //     delay: Math.random() * 2000,
+  //     easing: 'easeInOutSine',
+  //     loop: true, // 让花瓣动画持续循环
+  //     complete: () => {
+  //       // 动画结束后重新生成花瓣，持续飘动
+  //       createPetalAnimation(petal); // 重新生成动画
+  //     }
+  //   });
+  // };
+
+  // // 初始化并生成持续飘动的花瓣
+  // const allPetals = document.querySelectorAll('[class^="petal"]');
+  // allPetals.forEach((petal) => {
+  //   createPetalAnimation(petal);
+  // });
+  //=====================================
 
   //  滚动动画合集
   const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
@@ -222,6 +276,7 @@ onMounted(() => {
 
 <template>
   <div class="container">
+    <img src="@/assets/images/briefIntroduction/aigei_com.gif" class="aigei">
     <div class="feature1">
       <div class="willow2"></div>
       <div class="college">
@@ -291,14 +346,14 @@ onMounted(() => {
       </div>
       <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
     </div>
-    <img src="@/assets/images/briefIntroduction/petal1.png" class="petal">
+    <!-- <img src="@/assets/images/briefIntroduction/petal1.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal2.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal5.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal7.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal3.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal6.png" class="petal">
     <img src="@/assets/images/briefIntroduction/petal4.png" class="petal">
-    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal"> -->
   </div>
 </template>
 
@@ -320,7 +375,17 @@ body::-webkit-scrollbar {
   letter-spacing: 2px;
   overflow: hidden;
   position: relative;
+
+  .aigei {
+    width: 1920px;
+    height: 1080px;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
 }
+
+
 
 .willow3 {
   width: 436px;
@@ -454,6 +519,7 @@ body::-webkit-scrollbar {
   background: url('@/assets/images/briefIntroduction/introduce.png') no-repeat;
   background-size: 100% 100%;
 
+
   .willow2 {
     width: 424px;
     height: 607px;
@@ -484,6 +550,7 @@ body::-webkit-scrollbar {
       writing-mode: vertical-rl;
     }
   }
+
 }
 
 .feature2 {

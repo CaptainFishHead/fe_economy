@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import noAccess from "@/assets/status/403.svg?component";
+
 
 defineOptions({
   name: "403"
@@ -11,7 +11,6 @@ const router = useRouter();
 
 <template>
   <div class="flex justify-center items-center h-[640px]">
-    <noAccess />
     <div class="ml-12">
       <p
         v-motion
