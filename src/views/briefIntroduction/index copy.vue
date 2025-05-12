@@ -8,44 +8,6 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import ScrollMagic from 'scrollmagic';
 import anime from 'animejs';
 
-const aimingPointData = ref([
-  { name: '学院特色', id: 'feature1' },
-  { name: '学院愿景', id: 'feature3' },
-  { name: '鸟瞰图', id: 'feature4' },
-  { name: '详细介绍', id: 'box4feature' },
-])
-const scrollToSection = (id: string) => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-const activeId = ref('')
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          activeId.value = entry.target.id;
-
-        }
-      });
-    },
-    {
-      root: null, // 视口为根
-      rootMargin: '0px',
-      threshold: 0.5, // 元素至少50%进入视口时才触发
-    }
-  );
-
-  aimingPointData.value.forEach((item) => {
-    const el = document.getElementById(item.id);
-    if (el) {
-      observer.observe(el);
-    }
-  });
-});
-
 let IntroList = ref([] as any[])
 const getIntroListData = () => {
   getIntroList().then((res: any) => {
@@ -133,10 +95,63 @@ onMounted(() => {
   //     direction: 'alternate'
   //   });
   // });
+  //=====================================
+  // const petals = document.querySelectorAll('[class^="petal"]');
+  // petals.forEach((petal) => {
+  //   const clone = petal.cloneNode(true) as HTMLElement;
+  //   petal.parentElement?.appendChild(clone);
+  // });
 
+  // const createPetalAnimation = (petal) => {
+  //   const randomX = Math.random() * window.innerWidth;
+  //   const randomY = -Math.random() * 500;
+  //   (petal as HTMLElement).style.left = `${randomX}px`;
+  //   (petal as HTMLElement).style.top = `${randomY}px`;
+
+  //   // 花瓣飘动动画效果
+  //   anime({
+  //     targets: petal,
+  //     translateX: [
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 500, duration: 3000 },
+  //       { value: (Math.random() - 0.5) * 300, duration: 3000 }
+  //     ],
+  //     translateY: [
+  //       { value: window.innerHeight * 0.5, duration: 3000 },
+  //       { value: window.innerHeight + 500, duration: 3000 }
+  //     ],
+  //     rotate: [
+  //       { value: Math.random() * 360, duration: 3000 },
+  //       { value: Math.random() * 720, duration: 3000 }
+  //     ],
+  //     scale: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: Math.random() * 0.3 + 0.2, duration: 1500 }
+  //     ],
+  //     opacity: [
+  //       { value: Math.random() * 0.5 + 0.5, duration: 1500 },
+  //       { value: 0, duration: 1500 }
+  //     ],
+  //     duration: Math.random() * 6000 + 4000,
+  //     delay: Math.random() * 2000,
+  //     easing: 'easeInOutSine',
+  //     loop: true, // 让花瓣动画持续循环
+  //     complete: () => {
+  //       // 动画结束后重新生成花瓣，持续飘动
+  //       createPetalAnimation(petal); // 重新生成动画
+  //     }
+  //   });
+  // };
+
+  // // 初始化并生成持续飘动的花瓣
+  // const allPetals = document.querySelectorAll('[class^="petal"]');
+  // allPetals.forEach((petal) => {
+  //   createPetalAnimation(petal);
+  // });
+  //=====================================
 
   //  滚动动画合集
-  const elements = ['.feature1', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
+  const elements = ['.feature1', '.feature2', '.feature3', '.feature4', '.box4feature', '.box5feature', '.box6feature']
 
   let currentIndex = 0;
   let autoScrollInterval: NodeJS.Timeout | null = null;
@@ -262,36 +277,25 @@ onMounted(() => {
 <template>
   <div class="container">
     <img src="@/assets/images/briefIntroduction/aigei_com.gif" class="aigei">
-    <div class="aimingPoint">
-      <div class="item" v-for="(item, index) in aimingPointData" :key="index" @click="scrollToSection(item.id)">
-        <div>{{ item.name }}</div>
-        <img src="@/assets/images/introduce/left_to.png"  class="left_to" v-if="activeId ==item.id">
-      </div>
-    </div>
-    <div class="feature1" id="feature1">
-      <img src="@/assets/images/introduce/flower1.png" class="feature1-flower1">
-      <img src="@/assets/images/introduce/sun.png" class="feature1-sun">
-      <img src="@/assets/images/introduce/mountain1.png" class="feature1-mountain1">
-      <img src="@/assets/images/introduce/mountain2.png" class="feature1-mountain2">
-      <img src="@/assets/images/introduce/mountain3.png" class="feature1-mountain3">
-      <img src="@/assets/images/introduce/mountain4.png" class="feature1-mountain4">
+    <div class="feature1">
+      <div class="willow2"></div>
       <div class="college">
         <div class="text">学院介绍</div>
       </div>
-      <div class="characteristics">
-        <img src="@/assets/images/introduce/people.png" class="people"></img>
-        <div class="form">
-          <div class="content">
-            <span v-for="(item) in collegeFeatures">{{ item }}</span>
-          </div>
-          <div class="title">
-            <div class="text">学院特色</div>
-          </div>
+    </div>
+    <div class="feature2">
+      <img src="@/assets/images/briefIntroduction/people.png" class="people"></img>
+      <div class="form">
+        <div class="content">
+          <span v-for="(item) in collegeFeatures">{{ item }}</span>
+        </div>
+        <div class="title">
+          <div class="text">学院特色</div>
         </div>
       </div>
-
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain1">
     </div>
-    <div class="feature3" id="feature3">
+    <div class="feature3">
       <div class="form">
         <div class="content">
           <span v-for="(item) in collegeVision">{{ item }}</span>
@@ -300,27 +304,17 @@ onMounted(() => {
           <div class="text">学院愿景</div>
         </div>
       </div>
-      <img src="@/assets/images/introduce/vision.png" class="people"></img>
-      <img src="@/assets/images/introduce/mountain5.png" class="feature3-mountain5">
-      <img src="@/assets/images/introduce/flower2.png" class="feature3-flower2">
-      <img src="@/assets/images/introduce/willow2.png" class="feature3-willow2">
+      <img src="@/assets/images/briefIntroduction/vision.png" class="people"></img>
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain2">
+      <img src="@/assets/images/briefIntroduction/willow1.png" class="mountain6">
     </div>
-    <div class="feature4" id="feature4">
-      <div class="feature4-title">
-        <span>新校区鸟瞰图 </span>
-        <img src="@/assets/images/introduce/circle.png" class="circle">
-      </div>
-      <img src="@/assets/images/introduce/mountain6.png" class="feature4-mountain6">
-      <img src="@/assets/images/introduce/overlooking.png" class="feature4-img">
-      <img src="@/assets/images/introduce/willow1.png" class="feature4-willow1">
-      <img src="@/assets/images/introduce/willow3.png" class="feature4-willow3">
+    <div class="feature4">
+      <img src="@/assets/images/briefIntroduction/rain.png" class="img">
+      <img src="@/assets/images/briefIntroduction/willow3.png" class="willow3">
     </div>
-    <div class="box4feature" id="box4feature">
+    <div class="box4feature">
       <div class="feature5 feature">
-        <div class="title">
-          <span>教育旗舰 理论重镇</span>
-          <img src="@/assets/images/introduce/circle.png" class="circle">
-        </div>
+        <div class="title">教育旗舰 理论重镇</div>
         <div class="content">
           中国人民大学经济学院于1998年正式组建，其前身最早可以溯源至1939年陕北公学设立的政治经济学研究室，后历经华北大学、华北联合大学演进，是新中国经济学科的重要奠基者和开拓者。作为中国经济学教育与研究的理论重镇，经济学院承担着培养高层次杰出经济学人才，构建中国气派、中国风格的经济学教育高地，为国家经济发展建言献策的伟大使命。
         </div>
@@ -338,25 +332,28 @@ onMounted(() => {
         </div>
       </div>
       <div class="feature8">
-        <img src="@/assets/images/introduce/schoolBadge.png" class="img">
+        <img src="@/assets/images/briefIntroduction/schoolBadge.png" class="img">
       </div>
       <img src="@/assets/images/briefIntroduction/flower1.png" class="flower2">
-      <img src="@/assets/images/introduce/willow3.png" class="box5feature-willow3">
-      <img src="@/assets/images/briefIntroduction/mountain2.png" class="box5feature-mountain4">
+      <img src="@/assets/images/briefIntroduction/mountain2.png" class="mountain4">
     </div>
     <div class="box6feature">
       <div class="feature9 feature">
-        <div class="title">
-          <span>大师云集 实力强悍</span>
-          <img src="@/assets/images/introduce/circle.png" class="circle">
-        </div>
+        <div class="title">大师云集 实力强悍</div>
         <div class="content">
           经济学院拥有目前国内最为完整和具有重大社会影响、老中青年龄结构合理的经济学专家团队，引领国内学术前沿，为党和国家的重大理论创新提供了有力的智力支持；形成了特点鲜明、结构完善的课程体系、教材体系和人才培养体系，牢牢地确立了国内最重要经济学人才培养基地的地位，在新时期为中央和各级政府机关、国际国内院校、全球顶尖企业输送了大批的优秀工作者。
         </div>
       </div>
-      <img src="@/assets/images/introduce/willow2.png" class="box6feature-willow2">
-      <img src="@/assets/images/introduce/mountain8.png" class="box6feature-mountain8">
+      <img src="@/assets/images/briefIntroduction/mountain1.png" class="mountain5">
     </div>
+    <!-- <img src="@/assets/images/briefIntroduction/petal1.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal2.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal5.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal7.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal3.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal6.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal4.png" class="petal">
+    <img src="@/assets/images/briefIntroduction/petal8.png" class="petal"> -->
   </div>
 </template>
 
@@ -372,17 +369,6 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-
-@keyframes slideFadeIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 .container {
   width: 100%;
   height: 100%;
@@ -396,34 +382,6 @@ body::-webkit-scrollbar {
     position: fixed;
     top: 0;
     left: 0;
-  }
-
-  .aimingPoint {
-    position: fixed;
-    top: 260px;
-    right: 10px;
-    z-index: 1000;
-
-    .item {
-      width: 160px;
-      height: 40px;
-      text-align: center;
-      line-height: 40px;
-      font-family: Source Han Sans CN;
-      font-weight: 500;
-      font-size: 26px;
-      color: #121212;
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      cursor: pointer;
-      align-items: center;
-      .left_to{
-        width: 25px;
-        height: 28px;
-        animation: slideFadeIn 0.5s ease-out;
-      }
-    }
   }
 }
 
@@ -510,6 +468,7 @@ body::-webkit-scrollbar {
 
 
 .feature1,
+.feature2,
 .feature3,
 .feature4,
 .box4feature,
@@ -517,7 +476,7 @@ body::-webkit-scrollbar {
 .box6feature {
   width: 100%;
   height: 100vh;
-  padding: 0 367px;
+  padding: 0 170px;
   transition: transform 0.8s ease-out, opacity 0.8s ease-out;
   will-change: transform, opacity;
 }
@@ -539,28 +498,17 @@ body::-webkit-scrollbar {
   z-index: 100;
 
   .title {
-    margin-bottom: 60px;
-    font-family: Source Han Sans CN;
+    font-family: SourceHanSansCN-Medium;
     font-weight: 500;
-    font-size: 54px;
-    color: #231A16;
-    position: relative;
-    display: inline-block;
-
-    .circle {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      right: -15px;
-      width: 98px;
-      height: 98px;
-    }
+    font-size: 74px;
+    color: #444444;
+    margin-bottom: 60px;
   }
 
   .content {
-    font-family: Source Han Sans CN;
+    font-family: SourceHanSansCN-Normal;
     font-weight: 400;
-    font-size: 28px;
+    font-size: 32px;
     color: #444444;
   }
 }
@@ -568,122 +516,30 @@ body::-webkit-scrollbar {
 .feature1 {
   width: 100%;
   height: 100vh;
-  position: relative;
-  display: flex;
+  background: url('@/assets/images/briefIntroduction/introduce.png') no-repeat;
+  background-size: 100% 100%;
 
 
-  &-flower1 {
-    width: 760px;
-    height: 901px;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  &-sun {
-    width: 88px;
-    height: 88px;
-    position: absolute;
-    top: 48px;
-    right: 120px;
-  }
-
-  &-mountain1 {
-    width: 223px;
-    height: 80px;
-    position: absolute;
-    top: 30%;
-    left: 649px;
-  }
-
-  &-mountain2 {
-    width: 703px;
-    height: 257px;
-    position: absolute;
-    top: 524px;
-    left: 0;
-  }
-
-  &-mountain3 {
-    width: 421px;
-    height: 239px;
-    position: absolute;
-    top: 227px;
-    right: 75px;
-  }
-
-  &-mountain4 {
-    width: 358px;
-    height: 139px;
-    position: absolute;
-    top: 337px;
-    right: 0;
-  }
-
-  .characteristics {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    position: relative;
-    padding-bottom: 30px;
-
-    .people {
-      width: 945px;
-      height: 587px;
-    }
-
-    .form {
-      display: flex;
-      align-items: center;
-
-      .content {
-        writing-mode: vertical-rl;
-        height: 472px;
-        font-family: SourceHanSansCN-Normal;
-        font-weight: 400;
-        font-size: 32px;
-        color: #121212;
-        line-height: 50px;
-        opacity: 0.8;
-
-        span {
-          padding: 10px 0;
-          display: inline-block;
-          border-right: 1px solid #B7070F;
-        }
-      }
-
-      .title {
-        width: 106px;
-        height: 375px;
-        background: url('@/assets/images/briefIntroduction/feature.png') no-repeat;
-        background-size: 100% 100%;
-        font-family: SJxingkai-C;
-        font-weight: 400;
-        font-size: 42px;
-        color: #EBEBEB;
-        margin-left: 42px;
-
-        .text {
-          writing-mode: vertical-rl;
-          margin-top: 40px;
-        }
-      }
-    }
-
-  }
-
-
-  .college {
-    width: 171px;
-    height: 435px;
-    background: url('@/assets/images/introduce/college.png') no-repeat;
+  .willow2 {
+    width: 424px;
+    height: 607px;
+    background: url('@/assets/images/briefIntroduction/willow2.png') no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    top: 113px;
-    left: 230px;
+    top: 316px;
+    left: 0;
+  }
+
+  .college {
+    width: 200px;
+    height: 522px;
+    background: url('@/assets/images/briefIntroduction/college.png') no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    top: 140px;
+    right: 400px;
     font-weight: 400;
-    font-size: 48px;
+    font-size: 68px;
     color: #600B02;
     font-family: SJxingkai-C;
     padding-top: 70px;
@@ -697,40 +553,67 @@ body::-webkit-scrollbar {
 
 }
 
-.feature3 {
+.feature2 {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   position: relative;
 
-  &-mountain5 {
-    width: 802px;
-    height: 290px;
-    position: absolute;
-    top: 40px;
-    right: 0;
+  .people {
+    width: 990px;
+    height: 725px;
   }
 
-  &-willow2 {
-    width: 396px;
-    height: 558px;
-    position: absolute;
-    top: 0;
-    right: 0;
+  .form {
+    display: flex;
+    align-items: center;
+
+    .content {
+      writing-mode: vertical-rl;
+      height: 431px;
+      font-family: SourceHanSansCN-Normal;
+      font-weight: 400;
+      font-size: 32px;
+      color: #121212;
+      line-height: 50px;
+      opacity: 0.8;
+
+      span {
+        padding: 10px 0;
+        display: inline-block;
+        border-right: 1px solid #B7070F;
+      }
+    }
+
+    .title {
+      width: 106px;
+      height: 375px;
+      background: url('@/assets/images/briefIntroduction/feature.png') no-repeat;
+      background-size: 100% 100%;
+      font-family: SJxingkai-C;
+      font-weight: 400;
+      font-size: 48px;
+      color: #EBEBEB;
+      margin-left: 42px;
+
+      .text {
+        writing-mode: vertical-rl;
+        margin-top: 20px;
+      }
+    }
   }
 
-  &-flower2 {
-    width: 421px;
-    height: 541px;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-  }
+}
+
+.feature3 {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
 
   .people {
-    width: 718px;
-    height: 718px;
-    margin-left: 50px;
+    width: 780px;
+    height: 826px;
   }
 
   .form {
@@ -762,13 +645,13 @@ body::-webkit-scrollbar {
       background-size: 100% 100%;
       font-family: SJxingkai-C;
       font-weight: 400;
-      font-size: 44px;
+      font-size: 48px;
       color: #EBEBEB;
       margin-left: 42px;
 
       .text {
         writing-mode: vertical-rl;
-        margin-top: 40px;
+        margin-top: 20px;
       }
     }
   }
@@ -777,64 +660,19 @@ body::-webkit-scrollbar {
 .feature4 {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   position: relative;
-  padding: 0;
-  padding-bottom: 80px;
 
-  &-title {
-    font-family: Source Han Sans CN;
-    font-weight: 500;
-    font-size: 52px;
-    color: #231A16;
-    position: absolute;
-    top: 100px;
-    left: 367px;
-
-    .circle {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      right: -15px;
-      width: 98px;
-      height: 98px;
-    }
-  }
-
-  &-mountain6 {
-    width: 925px;
-    height: 356px;
-    position: absolute;
-    top: 40px;
-    left: 110px;
-  }
-
-  &-img {
-    width: 1920px;
-    height: 805px;
-  }
-
-  &-willow1 {
-    width: 175px;
-    height: 115px;
-    position: absolute;
-    top: 30px;
-    left: 826px;
-  }
-
-  &-willow3 {
-    width: 286px;
-    height: 401px;
-    position: absolute;
-    top: 30px;
-    left: 0;
+  .img {
+    width: 1580px;
+    height: 788px;
   }
 }
 
 .feature6 {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 
   .img {
     width: 815px;
@@ -844,12 +682,12 @@ body::-webkit-scrollbar {
 
 .feature8 {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
 
   .img {
     width: 828px;
-    height: 500px;
+    height: 524px;
   }
 }
 
@@ -857,52 +695,19 @@ body::-webkit-scrollbar {
   width: 100%;
   height: 100vh;
   position: relative;
-  justify-content: flex-start;
 }
 
 .box5feature {
   width: 100%;
   height: 100vh;
   position: relative;
-
-  &-willow3 {
-    width: 284px;
-    height: 401px;
-    position: absolute;
-    top: 60px;
-    left: 0;
-  }
-
-  &-mountain4 {
-    width: 777px;
-    height: 319px;
-    position: absolute;
-    top: 60px;
-    left: 90px;
-  }
 }
 
 .box6feature {
   width: 100%;
   height: 100vh;
-  position: relative;
-
-  &-mountain8 {
-    width: 1062px;
-    height: 400px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
-
-  &-willow2 {
-    width: 391px;
-    height: 558px;
-    position: absolute;
-    bottom: 130px;
-    right: 0;
-  }
 }
+
 
 .feature:hover {
   transform: translateY(-10px);

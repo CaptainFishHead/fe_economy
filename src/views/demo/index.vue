@@ -1,98 +1,100 @@
-<!-- SwiperDemo.vue -->
-<template>
-  <h1>SwiperDemo</h1>
-  <div class="swiper-container">
-    <swiper :slides-per-view="3" :space-between="30" :centered-slides="true" :loop="true" navigation class="my-swiper">
-      <swiper-slide v-for="n in productCheckText" :key="n.id"><img :src="n.image"></swiper-slide>
-
-      <!-- 导航按钮 -->
-      <template #navigation-prev>
-        <div class="swiper-button-prev" />
-      </template>
-      <template #navigation-next>
-        <div class="swiper-button-next" />
-      </template>
-    </swiper>
-  </div>
-
-</template>
-
-<script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import { ref, onMounted, } from 'vue'
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
-const productCheckText = ref([
-  { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-  { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-  { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-  { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-  // { id: 3, image: 'https://picsum.photos/id/1019/600/800' }
-])
-</script>
-
-<style scoped lang="scss">
-h1 {
-  color: black;
-  font-size: 30px;
-  font-weight: 900;
-  text-align: center;
-  margin: 30px auto;
+<style scoped>
+.card {
+  margin: 500px;
+  width: 300px;
+  height: 200px;
+  background: rgb(184, 137, 94);
+  position: relative;
+  display: grid;
+  place-content: center;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
 }
 
-.swiper-container {
-  width: 100%;
-  height: 763px;
-  padding: 10px 206px;
+
+
+.border {
+  position: absolute;
+  inset: 0px;
+  border: 2px solid #713F12;
+  opacity: 0;
+  transform: rotate(10deg);
+  transition: all 0.5s ease-in-out;
 }
 
-.my-swiper {
-  width: 100%;
-  height: 100%;
-
+.content {
+  transition: all 0.5s ease-in-out;
 }
 
-.swiper-slide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  background: #fff;
-  height: 740px;
-  transform: scale(0.8);
-  transition: 300ms;
-  border: 2px solid #d40c0c;
-
-  img {
-    width: 100%;
-    height: 100%;
-  }
+.content .logo {
+  height: 35px;
+  position: relative;
+  width: 33px;
+  overflow: hidden;
+  transition: all 1s ease-in-out;
+  font-family: Source Han Sans CN;
+  font-weight: 400;
+  font-size: 36px;
+  color: #4F4125;
 }
 
-.swiper-slide-active,
-.swiper-slide-duplicate-active {
+.content .logo .logo1 {
+  height: 33px;
+  position: absolute;
+  left: 0;
+}
+
+.content .logo .logo2 {
+  height: 33px;
+  position: absolute;
+  left: 33px;
+}
+
+
+.card:hover {
   transform: scale(1);
 }
 
-
-
-::v-deep .swiper-button-next,
-::v-deep .swiper-button-prev {
-  color: #000; // 可选：黑色图标
-  width: 40px;
-  height: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
+.card:hover .logo {
+  width: 134px;
+  animation: opacity 1s ease-in-out;
 }
 
-::v-deep .swiper-button-next::after,
-::v-deep .swiper-button-prev::after {
-  font-size: 20px;
+.card:hover .border {
+  inset: 15px;
+  opacity: 1;
+  transform: rotate(0);
+  transform: scale(0.9);
+}
+
+
+@keyframes opacity {
+  0% {
+    border-right: 1px solid transparent;
+  }
+
+  10% {
+    border-right: 1px solid #bd9f67;
+  }
+
+  80% {
+    border-right: 1px solid #bd9f67;
+  }
+
+  100% {
+    border-right: 1px solid transparent;
+  }
 }
 </style>
+
+<template>
+  <div class="card">
+    <div class="border"></div>
+    <div class="content">
+      <div class="logo">
+        <div class="logo1">更多</div>
+        <div class="logo2">图片</div>
+      </div>
+    </div>
+  </div>
+</template>

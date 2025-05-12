@@ -7,6 +7,12 @@ import ScrollMagic from 'scrollmagic';
 // 注册 ScrollTrigger 插件
 gsap.registerPlugin(ScrollTrigger);
 
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 const timelineList = ref([
   { id: '1', name: '1946~1950年', content: '经济学院的前身可以溯源至1946年华北联合大学设立的财经系，该系于1947年改称经济学系，系主任先后为何干之（兼）和宋涛。1950年，成立国民经济计划系。' },
@@ -533,8 +539,8 @@ onUnmounted(() => {
       <img class="standard-img" src="@/assets/images/timeline/standard.png">
       <div class="timeline-container">
         <div class="timeline-content" :style="{ transform: `translateY(-${scrollPosition}px)` }">
-          <div class="time" v-for="(item, index) in timelineList" :key="index">
-            <a :href="'#' + item.id">{{ item.name }}</a>
+          <div class="time" v-for="(item, index) in timelineList" :key="index" @click="scrollToSection(item.id)"> {{
+            item.name }}
           </div>
         </div>
       </div>

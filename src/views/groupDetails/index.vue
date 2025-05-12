@@ -19,22 +19,22 @@ const scrollToSection = (id: string) => {
 }
 
 const route = useRoute()
-const photoId = ref<string>('4')
+const photoId = ref<string>('')
 const photoCover = ref<string>('')
+photoId.value = route.query.id as string;
+photoCover.value = route.query.image as string;
 onMounted(() => {
-  photoId.value = route.query.id as string;
-  photoCover.value = route.query.image as string;
   getPClassPhotoData()
   getClassTeacherData()
 })
 
 
-const photoQuery = ref({ page: 1, limit: 9, class_id: photoId.value })
+const photoQuery = ref({ page: 1, limit: 11, class_id: photoId.value })
 
 // 上课照片数据
 const photoList = ref([])
 const getPClassPhotoData = () => {
-  getClassPhoto(photoQuery.value).then(res => {
+  getClassPhoto({ page: 1, limit: 11, class_id: photoId.value }).then(res => {
     photoList.value = res.data
     nextTick(() => {
       gsap.from('.photoItem', {
@@ -103,12 +103,10 @@ const aboutVideoRef = ref<HTMLVideoElement[]>([]);
 const showPlay = ref<boolean>(false);
 const getClassVideoData = () => {
   getClassVideoList({
-    class_id: '576'
+    class_id: photoId.value
   }).then(res => {
     accordionItems.value = res.data
     lastIndex.value = accordionItems.value.length - 1;
-    console.log(lastIndex.value);
-
     nextTick(() => {
       const firstItem = document.querySelectorAll('.accordion-item')[lastIndex.value];
       const firstVideo = firstItem.querySelector('.accordion-video');
@@ -184,7 +182,7 @@ onMounted(() => {
 const productCheckText = ref([])
 // 加载数据
 const getResourceData = () => {
-  getResourceList({ class_id: '576' }).then(res => {
+  getResourceList({ class_id: photoId.value }).then(res => {
     files.value = res.data
     productCheckText.value = res.data[0].list || []
   })
@@ -218,7 +216,7 @@ const productSwiper = [EffectCoverflow, Autoplay]
 // Coverflow 配置
 const productSwiperCoverflowEffect = {
   rotate: 0,// 旋转角度（左右滑块）
-  stretch: 100,// 间距（0 代表默认）
+  stretch: 80,// 间距（0 代表默认）
   depth: 0,// 深度（滑块间的远近）
   modifier: 1, // 整体效果强度
   slideShadows: false,// 开启阴影
@@ -250,7 +248,7 @@ const talentBreakpoints = {
 <template>
   <div class="container">
     <div class="display">
-      <el-image :src="photoCover" class="photo" v-if="photoCover" />
+      <el-image :src="photoCover + '?x-oss-process=image/quality,q_60'" class="photo" v-if="photoCover" />
       <img src="@/assets/images/groupDetails/cloud.png" class="cloud">
     </div>
     <div class="attend" id="attend">
@@ -260,12 +258,17 @@ const talentBreakpoints = {
       <div class="content">
         <div class="photoList">
           <template v-for="(item, index) in photoList" :key="index">
-            <div v-if="index == 2" class="photoItem" style="background: #B8895E;display: flex; padding: 17px;">
-              <div class="photoItem-more"><span>更多图片</span></div>
+            <div v-if="index == 2" class="photoItem itemMore">
+              <div class="border"></div>
+              <div class="more">
+                <div class="logo">
+                  <div class="logo1">更多</div>
+                  <div class="logo2">图片</div>
+                </div>
+              </div>
             </div>
             <div class="photoItem" v-else>
-              <el-image :src="item.url" class="photoItem-img" lazy fit="cover" />
-              <!-- <img :src="item.url" class="photoItem-img" /> -->
+              <el-image :src="item.url + '?x-oss-process=image/quality,q_60'" class="photoItem-img" lazy fit="cover" />
             </div>
           </template>
         </div>
@@ -276,40 +279,40 @@ const talentBreakpoints = {
         <div class="title">教师风采</div>
       </div>
       <div class="content">
-        <div class="teacherList">
-          <img src="@/assets/images/groupDetails/flower1.png" class="flower1">
-          <div class="viewport">
-            <div class="viewport_left">
-              <img :src="defaultTeacher.image" class="teacher_img">
-            </div>
-            <div class="viewport_right">
-              <div class="teacher_name"> {{ defaultTeacher.name }} </div>
-              <div class="present dian5">{{ defaultTeacher.phrase }}</div>
-              <div class="learn_more">了解详情＞＞</div>
-              <div class="courseware" v-if="false">
-                <div class="courseware-title">相关课件：</div>
-                <div class="courseware-box">
-                  <div class="courseware-box-text">老师课件</div>
-                  <img src="@/assets/images/groupDetails/doc.png">
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="switch">
-            <div class="switch-btn left_btn"></div>
-            <div class="switch-list">
-              <div class="switch-list-item" v-for="(item, index) in teacherData" :key="index">
-                <div class="switch-list-item-card" @click="defaultTeacher = item">
-                  <img :src="item.image" class="switch-list-item-card-img">
-                </div>
-                <div class="switch-list-item-name">{{ item.name }}</div>
+        <img src="@/assets/images/groupDetails/flower1.png" class="flower1">
+        <div class="viewport">
+          <div class="viewport_left">
+            <img :src="defaultTeacher.image" class="teacher_img">
+          </div>
+          <div class="viewport_right">
+            <div class="teacher_name"> {{ defaultTeacher.name }} </div>
+            <div class="present dian5">{{ defaultTeacher.phrase }}</div>
+            <div class="learn_more">了解详情＞＞</div>
+            <div class="courseware" v-if="false">
+              <div class="courseware-title">相关课件：</div>
+              <div class="courseware-box">
+                <div class="courseware-box-text">老师课件</div>
+                <img src="@/assets/images/groupDetails/doc.png">
               </div>
             </div>
-            <div class="switch-btn right_btn"></div>
           </div>
         </div>
+
+        <div class="switch">
+          <div class="switch-btn left_btn"></div>
+          <div class="switch-list">
+            <div class="switch-list-item" v-for="(item, index) in teacherData" :key="index">
+              <div class="switch-list-item-card" @click="defaultTeacher = item">
+                <img :src="item.image" class="switch-list-item-card-img">
+              </div>
+              <div class="switch-list-item-name">{{ item.name }}</div>
+            </div>
+          </div>
+          <div class="switch-btn right_btn"></div>
+        </div>
       </div>
+
     </div>
     <div class="completionVideo" id="completionVideo">
       <img src="@/assets/images/groupDetails/flower2.png" class="flower2">
@@ -352,7 +355,7 @@ const talentBreakpoints = {
             :grab-cursor="true">
             <swiper-slide v-for="item in productCheckText" :key="item.id">
               <div class="ipc-right-swiperslide">
-                <img :src="item.image" class="img-cover" />
+                <img :src="item.image + '?x-oss-process=image/quality,q_80'" class="img-cover" />
               </div>
             </swiper-slide>
           </swiper>
@@ -414,8 +417,7 @@ const talentBreakpoints = {
   align-items: center;
 
   .top {
-    margin-top: 120px;
-    margin-bottom: 120px;
+    margin-top: 110px;
     width: 1112px;
     height: 56px;
     background: url('@/assets/images/groupDetails/brows.png') no-repeat;
@@ -437,6 +439,7 @@ const talentBreakpoints = {
   .content {
     flex: 1;
     width: 100%;
+    margin-top: 120px;
   }
 }
 
@@ -475,6 +478,90 @@ const talentBreakpoints = {
       gap: 1px;
     }
 
+    .itemMore {
+      background: rgb(184, 137, 94);
+      position: relative;
+      display: grid;
+      place-content: center;
+      overflow: hidden;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .border {
+      position: absolute;
+      inset: 0px;
+      border: 2px solid #713F12;
+      opacity: 0;
+      transform: rotate(10deg);
+      transition: all 0.5s ease-in-out;
+    }
+
+    .more {
+      transition: all 0.5s ease-in-out;
+    }
+
+    .more .logo {
+      height: 50px;
+      position: relative;
+      width: 80px;
+      overflow: hidden;
+      transition: all 1s ease-in-out;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      font-size: 36px;
+      color: #4F4125;
+    }
+
+    .more .logo .logo1 {
+      height: 50px;
+      position: absolute;
+      left: 0;
+    }
+
+    .more .logo .logo2 {
+      height: 50px;
+      position: absolute;
+      left: 80px;
+    }
+
+
+    .itemMore:hover {
+      transform: scale(1);
+    }
+
+    .itemMore:hover .logo {
+      width: 160px;
+      animation: opacity 1s ease-in-out;
+    }
+
+    .itemMore:hover .border {
+      inset: 15px;
+      opacity: 1;
+      transform: rotate(0);
+      transform: scale(0.95);
+    }
+
+
+    @keyframes opacity {
+      0% {
+        border-right: 1px solid transparent;
+      }
+
+      10% {
+        border-right: 1px solid #bd9f67;
+      }
+
+      80% {
+        border-right: 1px solid #bd9f67;
+      }
+
+      100% {
+        border-right: 1px solid transparent;
+      }
+    }
+
+
+
     /* 所有项默认样式 */
     .photoItem {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -485,18 +572,7 @@ const talentBreakpoints = {
         object-fit: cover;
       }
 
-      &-more {
-        width: 100%;
-        height: 100%;
-        border: 1px solid #713F12;
-        font-family: Source Han Sans CN;
-        font-weight: 400;
-        font-size: 36px;
-        color: #4F4125;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+
 
       &:hover {
         transform: scale(1.05) translateY(-5px);
@@ -565,13 +641,10 @@ const talentBreakpoints = {
 
 .teacher {
   .content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: url('@/assets/images/groupDetails/bj_2.png') no-repeat;
     background-size: 100% 100%;
     position: relative;
-    min-height: 926px;
+    margin-top: 60px;
 
     .flower1 {
       width: 290px;
@@ -581,162 +654,159 @@ const talentBreakpoints = {
       top: 0;
     }
 
-    .teacherList {
-      width: 100%;
-      height: 100%;
 
-      .viewport {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .viewport {
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-        .viewport_left {
-          z-index: 10;
-          width: 575px;
-          height: 575px;
-          background: url('@/assets/images/groupDetails/border.png') no-repeat;
-          background-size: 100% 100%;
-          padding: 24px 24px 32px 28px;
-          overflow: hidden;
+      .viewport_left {
+        z-index: 10;
+        width: 575px;
+        height: 575px;
+        background: url('@/assets/images/groupDetails/border.png') no-repeat;
+        background-size: 100% 100%;
+        padding: 24px 24px 32px 28px;
+        overflow: hidden;
 
-          .teacher_img {
-            width: 100%;
-            height: 100%;
-            // object-fit: cover;
-            border-radius: 50%;
-          }
-        }
-
-        .viewport_right {
-          z-index: 1;
-          margin-left: -180px;
-          width: 690px;
-          height: 473px;
-          background: url('@/assets/images/groupDetails/teacher_card.png') no-repeat;
-          background-size: 100% 100%;
-          padding: 24px 108px 0 248px;
-
-          .teacher_name {
-            font-family: Source Han Sans CN;
-            font-weight: 500;
-            font-size: 40px;
-            color: #422205;
-            text-align: center;
-          }
-
-          .present {
-            font-family: Source Han Sans CN;
-            font-size: 22px;
-            color: #1C3E42;
-          }
-
-          .learn_more {
-            font-family: Source Han Sans CN;
-            font-weight: 500;
-            font-size: 22px;
-            color: #9A4B3F;
-            width: 100%;
-            text-align: right;
-            margin: 16px 0;
-          }
-
-          .courseware {
-            font-family: Source Han Sans CN;
-            font-weight: bold;
-            font-size: 20px;
-            color: #944032;
-            display: flex;
-
-            &-title {
-              font-weight: bold;
-            }
-
-            &-box {
-              background: url('@/assets/images/groupDetails/courseware_bj.png') no-repeat;
-              background-size: 100% 100%;
-              width: 157px;
-              height: 135px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              position: relative;
-
-              &-text {
-                position: absolute;
-                left: 0;
-                writing-mode: vertical-rl;
-                font-family: Source Han Sans CN;
-                font-weight: 400;
-                font-size: 19px;
-                color: #83550A;
-              }
-
-              img {
-                width: 48px;
-                height: 56px;
-              }
-            }
-          }
+        .teacher_img {
+          width: 100%;
+          height: 100%;
+          // object-fit: cover;
+          border-radius: 50%;
         }
       }
 
-      .switch {
-        width: 100%;
-        padding: 0 270px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-flow: row wrap;
+      .viewport_right {
+        z-index: 1;
+        margin-left: -180px;
+        width: 690px;
+        height: 473px;
+        background: url('@/assets/images/groupDetails/teacher_card.png') no-repeat;
+        background-size: 100% 100%;
+        padding: 24px 108px 0 248px;
 
-        &-list {
+        .teacher_name {
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          font-size: 40px;
+          color: #422205;
+          text-align: center;
+        }
+
+        .present {
+          font-family: Source Han Sans CN;
+          font-size: 22px;
+          color: #1C3E42;
+        }
+
+        .learn_more {
+          font-family: Source Han Sans CN;
+          font-weight: 500;
+          font-size: 22px;
+          color: #9A4B3F;
+          width: 100%;
+          text-align: right;
+          margin: 16px 0;
+        }
+
+        .courseware {
+          font-family: Source Han Sans CN;
+          font-weight: bold;
+          font-size: 20px;
+          color: #944032;
           display: flex;
-          width: 80%;
 
-          &-item {
-            margin: 28px;
+          &-title {
+            font-weight: bold;
+          }
 
-            &-card {
-              background: url('@/assets/images/groupDetails/border_small.png') no-repeat;
-              background-size: 100% 100%;
-              width: 104px;
-              height: 96px;
-              padding: 6px 10px 8px 15px;
+          &-box {
+            background: url('@/assets/images/groupDetails/courseware_bj.png') no-repeat;
+            background-size: 100% 100%;
+            width: 157px;
+            height: 135px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
 
-              &-img {
-                border-radius: 50%;
-                width: 80px;
-                height: 80px;
-              }
+            &-text {
+              position: absolute;
+              left: 0;
+              writing-mode: vertical-rl;
+              font-family: Source Han Sans CN;
+              font-weight: 400;
+              font-size: 19px;
+              color: #83550A;
             }
 
-            &-name {
-              text-align: center;
-              font-family: Source Han Sans CN;
-              font-weight: 500;
-              font-size: 18px;
-              color: #143C3C;
+            img {
+              width: 48px;
+              height: 56px;
             }
           }
-        }
-
-        &-btn {
-          width: 120px;
-          height: 67px;
-          background-size: 100% 100%;
-        }
-
-        .left_btn {
-          background: url('@/assets/images/groupDetails/left_btn.png') no-repeat;
-        }
-
-        .right_btn {
-          background: url('@/assets/images/groupDetails/right_btn.png') no-repeat;
         }
       }
     }
+
+    .switch {
+      margin-top: 20px;
+      width: 100%;
+      padding: 0 270px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-flow: row wrap;
+
+      &-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 80%;
+
+        &-item {
+          margin: 0 28px;
+
+          &-card {
+            background: url('@/assets/images/groupDetails/border_small.png') no-repeat;
+            background-size: 100% 100%;
+            width: 104px;
+            height: 96px;
+            padding: 6px 10px 8px 15px;
+
+            &-img {
+              border-radius: 50%;
+              width: 80px;
+              height: 80px;
+            }
+          }
+
+          &-name {
+            text-align: center;
+            font-family: Source Han Sans CN;
+            font-weight: 500;
+            font-size: 18px;
+            color: #143C3C;
+          }
+        }
+      }
+
+      &-btn {
+        width: 120px;
+        height: 67px;
+        background-size: 100% 100%;
+      }
+
+      .left_btn {
+        background: url('@/assets/images/groupDetails/left_btn.png') no-repeat;
+      }
+
+      .right_btn {
+        background: url('@/assets/images/groupDetails/right_btn.png') no-repeat;
+      }
+    }
   }
-
-
 }
 
 .completionVideo {
