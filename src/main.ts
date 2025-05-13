@@ -13,7 +13,6 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import structuredClone from '@ungap/structured-clone'
 
-console.log('当前模式：', import.meta.env.MODE)
 // 如果全局未定义 structuredClone，则定义它
 if (typeof window.structuredClone === 'undefined') {
   window.structuredClone = structuredClone
