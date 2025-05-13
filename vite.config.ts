@@ -23,15 +23,9 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',// 允许外部访问
       port: 8088,// 开发服务器端口
       proxy: {
-        // 开发环境代理配置
-        '/dev': {
-          target: env.VITE_APP_BASE_URL, // 目标地址
-          changeOrigin: true,// 是否改变源
-          rewrite: path => path.replace(/^\/dev/, '') // 重写路径
-        },
-        // 生产环境代理配置
-        '/pro': {
-          target: env.VITE_APP_BASE_URL,
+        // 代理配置
+        '/api': {
+          target: 'http://api.jjxy.hxqxt.com',
           changeOrigin: true,
           rewrite: path => path.replace(/^\/pro/, '')
         }
@@ -54,6 +48,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
+        external: ['vue', 'vue-router', 'element-plus'],// 外部依赖，不打包
         output: {
           manualChunks: id => {
             // 手动分包配置
@@ -64,7 +59,6 @@ export default defineConfig(({ mode }) => {
             if (id.includes('gsap')) return 'gsap' // gsap 单独打包
             if (id.includes('element-plus')) return 'element-plus' // Element Plus 单独打包
           },
-          external: ['vue', 'vue-router', 'element-plus'],// 外部依赖，不打包
           paths: {
             // 使用 CDN 加载外部依赖
             'vue': 'https://cdn.jsdelivr.net/npm/vue@3.3.11/dist/vue.global.prod.js',

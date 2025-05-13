@@ -93,7 +93,8 @@ onMounted(() => {
       <div class="photoList" v-loading="loading">
         <div class="item" v-for="(item) in trainingList" :key="item.id" @click="photoClick(item)">
           <div class="item-box">
-            <el-image class="img" :src="item.image + '?x-oss-process=image/format,webp/quality,q_70'" lazy />
+            <img class="img" :src="item.image + '?x-oss-process=image/format,webp/quality,q_50'" v-if="item.image" />
+            <div class="text" v-else>未上传图片</div>
             <div class="mask">
               <div class="title">{{ item.title }}</div>
               <div class="time">({{ item.year_month }})</div>
@@ -247,12 +248,12 @@ onMounted(() => {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding-top: 96px;
+    padding-top: 80px;
     box-sizing: border-box;
 
     .item {
       width: calc(100% / 4 - 9px);
-      height: 250px;
+      height: 240px;
       box-sizing: border-box;
       padding: 8px 5px 0 6px;
       position: relative;
@@ -261,7 +262,7 @@ onMounted(() => {
 
       .item-box {
         width: 100%;
-        height: 200px;
+        height: 190px;
         margin-bottom: 60px;
         border-radius: 20px;
         z-index: 1;
@@ -272,6 +273,15 @@ onMounted(() => {
         .img {
           width: 100%;
           height: 100%;
+          // object-fit: cover;
+        }
+        .text{
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          line-height: 190px;
+          color: #F8F7F6;
+          font-size: 30px;
         }
 
         .mask {

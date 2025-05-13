@@ -14,14 +14,12 @@
       </template>
     </swiper>
   </div>
-
 </template>
 
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { ref, onMounted, } from 'vue'
 import 'swiper/css';
-import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 const productCheckText = ref([
   { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
@@ -29,9 +27,9 @@ const productCheckText = ref([
   { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
   { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
   { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-  { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-  { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
+  // { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
+  // { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
+  // { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
   // { id: 3, image: 'https://picsum.photos/id/1019/600/800' }
 ])
 </script>

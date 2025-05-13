@@ -34,7 +34,7 @@ const photoQuery = ref({ page: 1, limit: 11, class_id: photoId.value })
 // 上课照片数据
 const photoList = ref([])
 const getPClassPhotoData = () => {
-  getClassPhoto({ page: 1, limit: 11, class_id: photoId.value }).then(res => {
+  getClassPhoto({ page: 1, limit: 11, class_id: '42' }).then(res => {
     photoList.value = res.data
     nextTick(() => {
       gsap.from('.photoItem', {
@@ -169,12 +169,10 @@ onMounted(() => {
 
 
 // 档案资料数据
-import "swiper/css";
 import "swiper/css/effect-coverflow";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Autoplay, EffectCoverflow } from 'swiper/modules'
 import 'swiper/css'
-import 'swiper/css/effect-coverflow'
+import 'swiper/css/navigation';
 const files = ref()
 onMounted(() => {
   getResourceData()
@@ -183,72 +181,26 @@ const productCheckText = ref([])
 // 加载数据
 const getResourceData = () => {
   getResourceList({ class_id: photoId.value }).then(res => {
-    files.value = res.data
-    productCheckText.value = res.data[0].list || []
+    // files.value = res.data
+    // productCheckText.value = files.value[0].list || []
+    const validData = (res.data || []).filter(item => Array.isArray(item.list) && item.list.length > 0)
+    if (validData.length > 0) {
+      files.value = validData
+      productCheckText.value = validData[0].list
+    }
   })
 }
-// const productCheckText = ref([
-//   { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-//   { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-//   // { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-//   // { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-//   // { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-//   // { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-//   // { id: 1, image: 'https://picsum.photos/id/1018/600/800' },
-//   // { id: 2, image: 'https://picsum.photos/id/1015/600/800' },
-//   // { id: 3, image: 'https://picsum.photos/id/1019/600/800' }
-// ])
+
 // 切换文件时更新图像列表
 const onClickFiles = (item) => {
   productCheckText.value = item.list || []
 }
-// slide 数量计算
-const productTextLength = computed(() => {
-  const len = productCheckText.value.length
-  return len >= 5 ? 4.95 : Math.max(1, len)
-})
-const centeredSlides = computed(() => productCheckText.value.length <= 2)
-const loopSlides = computed(() => productCheckText.value.length >= 3)
-
-// Swiper 模块
-const productSwiper = [EffectCoverflow, Autoplay]
-
-// Coverflow 配置
-const productSwiperCoverflowEffect = {
-  rotate: 0,// 旋转角度（左右滑块）
-  stretch: 80,// 间距（0 代表默认）
-  depth: 0,// 深度（滑块间的远近）
-  modifier: 1, // 整体效果强度
-  slideShadows: false,// 开启阴影
-  scale: 0.75,// 中间缩放比例
-}
-
-// 断点响应
-const talentBreakpoints = {
-  320: {
-    slidesPerView: 1,
-    centeredSlides: true
-  },
-  768: {
-    slidesPerView: 1.5,
-    centeredSlides: true
-  },
-  1024: {
-    slidesPerView: 3,
-    centeredSlides: false
-  },
-  1440: {
-    slidesPerView: 4,
-    centeredSlides: false
-  }
-}
-
 
 </script>
 <template>
   <div class="container">
     <div class="display">
-      <el-image :src="photoCover + '?x-oss-process=image/quality,q_60'" class="photo" v-if="photoCover" />
+      <el-image :src="photoCover + '?x-oss-process=image/quality,q_40'" class="photo" v-if="photoCover" />
       <img src="@/assets/images/groupDetails/cloud.png" class="cloud">
     </div>
     <div class="attend" id="attend">
@@ -268,7 +220,7 @@ const talentBreakpoints = {
               </div>
             </div>
             <div class="photoItem" v-else>
-              <el-image :src="item.url + '?x-oss-process=image/quality,q_60'" class="photoItem-img" lazy fit="cover" />
+              <el-image :src="item.url + '?x-oss-process=image/quality,q_40'" class="photoItem-img" lazy fit="cover" />
             </div>
           </template>
         </div>
@@ -279,7 +231,6 @@ const talentBreakpoints = {
         <div class="title">教师风采</div>
       </div>
       <div class="content">
-
         <img src="@/assets/images/groupDetails/flower1.png" class="flower1">
         <div class="viewport">
           <div class="viewport_left">
@@ -298,7 +249,6 @@ const talentBreakpoints = {
             </div>
           </div>
         </div>
-
         <div class="switch">
           <div class="switch-btn left_btn"></div>
           <div class="switch-list">
@@ -312,7 +262,6 @@ const talentBreakpoints = {
           <div class="switch-btn right_btn"></div>
         </div>
       </div>
-
     </div>
     <div class="completionVideo" id="completionVideo">
       <img src="@/assets/images/groupDetails/flower2.png" class="flower2">
@@ -347,22 +296,23 @@ const talentBreakpoints = {
         <div class="title">档案资料</div>
       </div>
       <div class="content">
-        <div class="product_swiper" :class="{ 'is-center': productCheckText.length <= 2 }">
-          <swiper :slides-per-view="productTextLength" :centered-slides="centeredSlides" :loop="loopSlides"
-            :breakpoints="talentBreakpoints" :effect="'coverflow'" :coverflow-effect="productSwiperCoverflowEffect"
-            :autoplay="{ delay: 2000, disableOnInteraction: false }" :speed="1500" :modules="productSwiper"
-            :observer="true" :resize-observer="true" :observe-parents="true" :slide-to-clicked-slide="true"
-            :grab-cursor="true">
-            <swiper-slide v-for="item in productCheckText" :key="item.id">
-              <div class="ipc-right-swiperslide">
-                <img :src="item.image + '?x-oss-process=image/quality,q_80'" class="img-cover" />
-              </div>
-            </swiper-slide>
+        <div class="swiper-container">
+          <swiper :slides-per-view="3" :space-between="30" :centered-slides="true" :loop="true" navigation
+            class="my-swiper">
+            <swiper-slide v-for="n in productCheckText" :key="n.id"><img :src="n.image"></swiper-slide>
+
+            <!-- 导航按钮 -->
+            <template #navigation-prev>
+              <div class="swiper-button-prev" />
+            </template>
+            <template #navigation-next>
+              <div class="swiper-button-next" />
+            </template>
           </swiper>
         </div>
         <div class='files_tab'>
           <div class="files_item" v-for="(item, index) in files" :key="index" @click="onClickFiles(item)">
-            <!-- <img :src="item.img" /> -->
+            <img :src="item.icon_image" />
             <div class="files_item_title">{{ item.title }}</div>
           </div>
         </div>
@@ -412,14 +362,16 @@ const talentBreakpoints = {
   width: 100%;
   height: 100vh;
   // min-height: 1080px;
+  // height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 80px;
 
   .top {
-    margin-top: 110px;
     width: 1112px;
     height: 56px;
+    min-height: 56px;
     background: url('@/assets/images/groupDetails/brows.png') no-repeat;
     background-size: 100% 100%;
     position: relative;
@@ -439,14 +391,14 @@ const talentBreakpoints = {
   .content {
     flex: 1;
     width: 100%;
-    margin-top: 120px;
+    margin-top: 100px;
   }
 }
 
 .display {
   width: 100%;
-  height: 100%;
-  min-height: 1080px;
+  height: 100vh;
+  padding-top: 0;
   position: relative;
 
   .photo {
@@ -460,7 +412,6 @@ const talentBreakpoints = {
     position: absolute;
     bottom: -310px;
     left: 0;
-
   }
 }
 
@@ -735,6 +686,7 @@ const talentBreakpoints = {
               position: absolute;
               left: 0;
               writing-mode: vertical-rl;
+              text-orientation: upright;
               font-family: Source Han Sans CN;
               font-weight: 400;
               font-size: 19px;
@@ -761,7 +713,6 @@ const talentBreakpoints = {
 
       &-list {
         display: flex;
-        flex-wrap: wrap;
         justify-content: center;
         width: 80%;
 
@@ -869,6 +820,7 @@ const talentBreakpoints = {
           .title {
             // writing-mode: vertical-rl;
             writing-mode: vertical-lr;
+            text-orientation: upright;
             text-align: center;
             font-family: Source Han Sans CN;
             font-weight: 400;
@@ -942,49 +894,63 @@ const talentBreakpoints = {
   .content {
     flex: 1;
     width: 100%;
+    margin-top: 80px;
 
-    .product_swiper {
+    .swiper-container {
       width: 100%;
       height: 763px;
       padding: 0 206px;
-      box-sizing: border-box;
-      margin-left: auto;
-      margin-right: auto;
+    }
 
-      &.is-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .my-swiper {
+      width: 100%;
+      height: 100%;
+
+    }
+
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: #fff;
+      height: 740px;
+      transform: scale(0.8);
+      transition: 300ms;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: scale(1.03) translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
       }
     }
 
-    .swiper {
-      width: 100%;
-      min-width: 521px;
-      height: 100%;
+    .swiper-slide-active,
+    .swiper-slide-duplicate-active {
+      transform: scale(1);
     }
 
-    .ipc-right-swiperslide {
-      width: 521px;
-      height: 763px;
-      overflow: hidden;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .ipc-right-swiperslide:hover {
-      transform: scale(1.03) translateY(-10px);
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+    ::v-deep .swiper-button-next,
+    ::v-deep .swiper-button-prev {
+      color: #000; // 可选：黑色图标
+      width: 40px;
+      height: 40px;
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 10;
     }
 
-    .img-cover {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    ::v-deep .swiper-button-next::after,
+    ::v-deep .swiper-button-prev::after {
+      font-size: 20px;
     }
-
-
 
     .files_tab {
       padding: 0 240px;
@@ -1014,6 +980,7 @@ const talentBreakpoints = {
           font-size: 16px;
           color: #83550A;
           writing-mode: vertical-rl;
+          text-orientation: upright;
           position: absolute;
           // top: 50%;
           // transform: translateY(-50%);

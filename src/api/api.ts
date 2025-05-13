@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API, // api的base_url
+  baseURL: '/api', // api的base_url
   timeout: 10000, // 请求超时时间
 });
 // 请求拦截器

@@ -61,16 +61,10 @@ const router = createRouter({
       component: () => import('@/views/lecturerDetails/index.vue')
     },
     {
-      path: '/teachingStyle',
-      name: 'teachingStyle',
-      meta: { title: '讲师详情' },
-      component: () => import('@/views/teachingStyle/index.vue')
-    },
-    {
       path: '/demo',
       name: 'demo',
       meta: { title: 'demo' },
-      component: () => import('@/views/demo/index.vue')
+      component: () => import('@/views/demo/SwiperDemo.vue')
     }
   ]
 })
