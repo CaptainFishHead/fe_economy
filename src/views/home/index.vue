@@ -1,7 +1,14 @@
 <template>
   <div class="home">
     <div class="loading" v-if="homeLoading">
+      <img src="@/assets/images/home/flower1.png" class="flower1">
+      <img src="@/assets/images/home/flower2.png" class="flower2">
       <div class="loading-box">
+        <div class="loading-question">实事求是</div>
+        <div class="loading-aperture" @click="handleLoading">
+          <img src="@/assets/images/home/aperture.png" class="aperture">
+          <img src="@/assets/images/home/arrow.png" class="arrow">
+        </div>
         <img class="loading-title" src="@/assets/images/home/loading_title.png">
         <div class="loading-introduce">
           <span v-for="(item) in collegeFeatures">{{ item }}</span>
@@ -9,7 +16,7 @@
       </div>
     </div>
     <!-- 顶部部分 -->
-    <section class="hero">
+    <section class="hero" v-if="!homeLoading">
       <div class="hero-logo" v-motion-slide-visible-once-bottom></div>
       <div class="hero-title" v-motion-slide-visible-once-bottom>
         <div class="hero-title-top">经承芳华八十载 济济群英四海至</div>
@@ -48,7 +55,7 @@
         <span>实</span>
         <span>事</span>
         <span>求</span>
-        <span>事</span>
+        <span>是</span>
       </div>
       <div class="hero-overlay"></div>
       <div class="hero-silk"></div>
@@ -57,11 +64,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { gsap } from 'gsap'
 import TypeIt from 'typeit'
 import { useRouter } from 'vue-router'
 const collegeFeatures = ref<string[]>([])
+
 const slicedString = (originalString: any) => {
   const result = [];
   for (let i = 0; i < originalString.length; i += 6) {
@@ -91,11 +99,16 @@ function toTrainingWall() {
 function platform() {
   router.push({ path: '/platform' })
 }
-const homeLoading = ref(true)
+
+
+const homeLoading = ref(localStorage.getItem('hasVisited') !== 'true')
+
+const handleLoading = () => {
+  homeLoading.value = false
+  localStorage.setItem('hasVisited', 'true') // 用户已进入，后续不再显示 loading
+}
+
 onMounted(() => {
-  setTimeout(() => {
-    homeLoading.value = false
-  }, 1500)
   new TypeIt(typeit.value as any, {
     strings:
       '中国人民大学经济学院是新中国经济学科重要奠基者与开拓者，理论经济学在教育部学科评估中使用连续四次全国第一，为国家“双一流”建设学科。我们立足中国大地，致力于构建和创新中国经济学体系，推动中国经济社会发展。八十几年来，我们培养了一批又一批有知识、有理想、有情怀、有担当的经济学理论人才和现代化强国建设人才。',
@@ -209,6 +222,21 @@ onMounted(() => {
   top: 0;
   left: 0;
 
+  .flower1 {
+    width: 259px;
+    height: 387px;
+    position: absolute;
+    bottom: 111px;
+    right: 0;
+  }
+
+  .flower2 {
+    width: 350px;
+    height: 526px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
 
   &-box {
     position: absolute;
@@ -216,6 +244,57 @@ onMounted(() => {
     right: 20%;
   }
 
+  &-question {
+    width: 50px;
+    height: 100px;
+    background: url('@/assets/images/home/question2.png') no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    left: -50px;
+    top: 200px;
+    font-family: SourceHanSerifSC-Medium;
+    font-weight: 500;
+    font-size: 19px;
+    color: #FFFFFF;
+    writing-mode: vertical-rl;
+    text-align: center;
+    line-height: 50px;
+  }
+
+  .loading-aperture {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    bottom: 280px;
+    right: 30px;
+    cursor: pointer;
+
+
+    .arrow {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .aperture {
+      width: 100%;
+      height: 100%;
+      animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
 
   &-title {
     width: 256px;
@@ -235,7 +314,7 @@ onMounted(() => {
     flex-direction: column;
 
     span {
-      padding: 10px 0;
+      padding: 16px 0;
       display: inline-block;
       border-right: 2px solid #fff;
     }

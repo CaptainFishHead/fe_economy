@@ -9,7 +9,7 @@ import { getClassList } from '@/api/home/index'
 const router = useRouter();
 
 const query = ref({
-  year: '2025',
+  year: '2024',
   title: '',
   page: 1,
   limit: 12

@@ -10,7 +10,7 @@
     <div class="main">
       <!-- Top: Lecturer Carousel -->
       <div class="carousel" ref="carouselRef">
-        <div class="carousel-btn left_btn"></div>
+        <div class="carousel-btn left_btn" @click="scrollLeft"></div>
         <div class="carousel-list">
           <div v-for="(lecturer, index) in lecturers" :key="index" class="carousel-item"
             :class="{ active: currentIndex === index }" @click="selectLecturer(index)">
@@ -22,18 +22,25 @@
             </div>
           </div>
         </div>
-        <div class="carousel-btn right_btn"></div>
+        <div class="carousel-btn right_btn" @click="scrollRight"></div>
       </div>
 
       <!-- Bottom: Tabs and Content -->
       <div class="bottom">
         <!-- Tabs -->
-        <div class="tabs">
-          <div v-for="(lecturer, index) in lecturers" :key="index" :class="['tab', { active: currentIndex === index }]"
-            @click="selectLecturer(index)">
-            {{ lecturer.name }}
+        <div class="timeline-tabs">
+          <div v-for="(tab, index) in tabs" :key="index" class="tab-item">
+            <div class="tab-dot-line">
+              <div class="dot"></div>
+              <div class="line" v-if="index < tabs.length - 1"></div>
+            </div>
+            <div class="tab-content">
+              {{ tab.label }}
+            </div>
           </div>
         </div>
+
+
 
         <!-- Detail -->
         <transition name="fade-slide" mode="out-in">
@@ -53,7 +60,12 @@ import { useRouter } from 'vue-router'
 import { getClassTeacherList } from '@/api/home/index'
 const router = useRouter()
 const goHome = () => router.push('/')
-
+const tabs = ref([
+  { label: '讲师介绍' },
+  { label: '讲师课件' },
+  { label: '邀请单位' },
+  { label: '授课风采' }
+])
 const lecturers = ref([
   {
     name: '李老师',
@@ -146,6 +158,17 @@ const selectLecturer = (index: number) => {
 }
 
 const currentLecturer = computed(() => lecturers.value[currentIndex.value])
+
+const carouselRef = ref(null)
+
+const scrollLeft = () => {
+  carouselRef.value?.querySelector('.carousel-list')?.scrollBy({ left: -200, behavior: 'smooth' })
+}
+
+const scrollRight = () => {
+  carouselRef.value?.querySelector('.carousel-list')?.scrollBy({ left: 200, behavior: 'smooth' })
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -192,29 +215,52 @@ const currentLecturer = computed(() => lecturers.value[currentIndex.value])
     flex-direction: column;
     justify-content: space-between;
 
+
     .carousel {
       display: flex;
-      justify-content: center;
       align-items: center;
-      gap: 40px;
       margin-bottom: 40px;
-      overflow: hidden;
+
+      // 保证左右按钮固定 + 中间区域自适应
+      &-btn {
+        min-width: 34px;
+        width: 34px;
+        height: 53px;
+        flex-shrink: 0; // 不压缩
+        cursor: pointer;
+      }
+
+      .left_btn {
+        background: url('@/assets/images/lecturerDetails/left_btn.png') no-repeat center;
+        background-size: cover;
+      }
+
+      .right_btn {
+        background: url('@/assets/images/lecturerDetails/right_btn.png') no-repeat center;
+        background-size: cover;
+      }
+
       &-list {
+        flex: 1; // 撑满剩余空间
         display: flex;
-        justify-content: center;
         overflow: hidden;
+        justify-content: flex-start; // 左对齐更自然
+        scroll-behavior: smooth;
+
         .carousel-item {
-          overflow: hidden;
+          flex: 0 0 auto; // 不压缩、不换行
+          margin: 8px 20px;
           transition: all 0.3s;
           cursor: pointer;
-          margin: 0 20px;
 
           &-card {
             width: 103px;
+            min-width: 103px;
             height: 95px;
             background: url('@/assets/images/lecturerDetails/card.png') no-repeat;
             background-size: cover;
             padding: 7px 10px 7px 14px;
+            box-sizing: border-box;
 
             &.active {
               background: url('@/assets/images/lecturerDetails/card_active.png') no-repeat;
@@ -230,7 +276,7 @@ const currentLecturer = computed(() => lecturers.value[currentIndex.value])
           }
 
           &-name {
-            font-family: Source Han Sans CN;
+            font-family: 'Source Han Sans CN', sans-serif;
             font-weight: 500;
             font-size: 18px;
             color: #143C3C;
@@ -239,28 +285,10 @@ const currentLecturer = computed(() => lecturers.value[currentIndex.value])
           }
 
           &.active {
-            border-color: #fff;
             transform: scale(1.1);
           }
         }
       }
-
-      &-btn {
-        width: 34px;
-        height: 53px;
-      }
-
-      .left_btn {
-        background: url('@/assets/images/lecturerDetails/left_btn.png') no-repeat;
-        background-size: cover;
-
-      }
-
-      .right_btn {
-        background: url('@/assets/images/lecturerDetails/right_btn.png') no-repeat;
-        background-size: cover;
-      }
-
     }
 
     .bottom {
@@ -268,20 +296,61 @@ const currentLecturer = computed(() => lecturers.value[currentIndex.value])
       flex: 1;
       gap: 40px;
 
-      .tabs {
+      .timeline-tabs {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        position: relative;
+        padding-left: 30px; // 给圆点留空间
+        font-family: 'Source Han Serif CN', sans-serif;
 
-        .tab {
-          padding: 12px 20px;
-          border-left: 3px solid transparent;
+        .tab-item {
+          display: flex;
+          align-items: center;
           cursor: pointer;
-          transition: all 0.3s;
+          position: relative;
+          padding-bottom: 55px;
 
-          &.active {
-            border-color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
+          &.active .tab-content {
+            background: url('@/assets/images/active-tab-bg.png') no-repeat center/contain;
+            color: #fff;
+          }
+
+          .tab-dot-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .dot {
+              width: 10px;
+              height: 10px;
+              background-color: #b39258;
+              border-radius: 50%;
+              margin-top: 5px;
+            }
+
+            .line {
+              flex: 1;
+              width: 2px;
+              background-color: #b39258;
+              margin-top: 5px;
+            }
+          }
+
+          .tab-content {
+            min-width: 244px;
+            min-height: 59px;
+            line-height: 59px;
+            text-align: center;
+            font-family: Source Han Sans CN;
+            font-weight: bold;
+            font-size: 26px;
+            color: #BBA673;
+            background: url('@/assets/images/lecturerDetails/tab.png') no-repeat center/contain;
+            margin-left: 20px;
           }
         }
       }

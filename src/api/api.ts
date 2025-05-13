@@ -3,13 +3,14 @@ import { ElMessage } from 'element-plus'
 
 // 创建axios实例
 const api = axios.create({
-  baseURL: '/api', // api的base_url
+  baseURL: '/dev',
   timeout: 10000, // 请求超时时间
 });
 // 请求拦截器
 api.interceptors.request.use(
   (config: any) => {
     config.data = JSON.stringify(config.data);
+    console.log('请求参数', config);
     return config;
   },
   (error: any) => {

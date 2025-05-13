@@ -24,10 +24,10 @@ export default defineConfig(({ mode }) => {
       port: 8088,// 开发服务器端口
       proxy: {
         // 代理配置
-        '/api': {
+        '/dev': {
           target: 'http://api.jjxy.hxqxt.com',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/pro/, '')
+          rewrite: path => path.replace(/^\/dev/, '')
         }
       }
     },
@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        external: ['vue', 'vue-router', 'element-plus'],// 外部依赖，不打包
+
         output: {
           manualChunks: id => {
             // 手动分包配置
@@ -59,6 +59,7 @@ export default defineConfig(({ mode }) => {
             if (id.includes('gsap')) return 'gsap' // gsap 单独打包
             if (id.includes('element-plus')) return 'element-plus' // Element Plus 单独打包
           },
+          external: ['vue', 'vue-router', 'element-plus'],// 外部依赖，不打包
           paths: {
             // 使用 CDN 加载外部依赖
             'vue': 'https://cdn.jsdelivr.net/npm/vue@3.3.11/dist/vue.global.prod.js',

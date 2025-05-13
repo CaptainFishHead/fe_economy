@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, nextTick } from 'vue'
 import { getClassPhoto, getClassTeacherList, getResourceList, getClassVideoList } from '@/api/home/index'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { gsap } from 'gsap'
 
 
 const aimingPointData = ref([
+  { name: '学员大合影', id: 'display' },
   { name: '上课照片', id: 'attend' },
   { name: '教师风采', id: 'teacher' },
   { name: '结业视频', id: 'completionVideo' },
@@ -17,7 +18,7 @@ const scrollToSection = (id: string) => {
     el.scrollIntoView({ behavior: 'smooth' });
   }
 }
-
+const router = useRouter();
 const route = useRoute()
 const photoId = ref<string>('')
 const photoCover = ref<string>('')
@@ -169,8 +170,8 @@ onMounted(() => {
 
 
 // 档案资料数据
-import "swiper/css/effect-coverflow";
 import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation } from 'swiper/modules'; // ✅ 引入模块
 import 'swiper/css'
 import 'swiper/css/navigation';
 const files = ref()
@@ -181,8 +182,6 @@ const productCheckText = ref([])
 // 加载数据
 const getResourceData = () => {
   getResourceList({ class_id: photoId.value }).then(res => {
-    // files.value = res.data
-    // productCheckText.value = files.value[0].list || []
     const validData = (res.data || []).filter(item => Array.isArray(item.list) && item.list.length > 0)
     if (validData.length > 0) {
       files.value = validData
@@ -190,17 +189,55 @@ const getResourceData = () => {
     }
   })
 }
+const openFile = (item: { url: string; }) => {
+  let url = item.url;
+  const type = url.split('.').pop()?.toLowerCase();
+
+  // ✅ Office 文档用 Office Online Viewer 打开
+  if (!type) {
+    console.warn('无法识别的文件类型');
+    return;
+  }
+
+  // 根据文件类型处理
+  if (['pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif'].includes(type)) {
+    // 直接在新标签页打开预览
+    window.open(url, '_blank');
+  } else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(type)) {
+    // 微软格式文件：可以使用微软 Office Online Viewer（可选）
+    const encodedUrl = encodeURIComponent(url);
+    const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodedUrl}`;
+    window.open(viewerUrl, '_blank');
+  } else {
+    // 其他类型：直接下载
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = ''; // 下载原文件名
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+};
+
 
 // 切换文件时更新图像列表
 const onClickFiles = (item) => {
   productCheckText.value = item.list || []
 }
+const handleLecturerDetails = () => {
+  router.push({
+    name: 'lecturerDetails',
+    query: {
+      id: defaultTeacher.value?.id
+    }
+  })
+}
 
 </script>
 <template>
   <div class="container">
-    <div class="display">
-      <el-image :src="photoCover + '?x-oss-process=image/quality,q_40'" class="photo" v-if="photoCover" />
+    <div class="display" id="display">
+      <img :src="photoCover + '?x-oss-process=image/quality,q_40'" class="photo" v-if="photoCover" />
       <img src="@/assets/images/groupDetails/cloud.png" class="cloud">
     </div>
     <div class="attend" id="attend">
@@ -239,7 +276,7 @@ const onClickFiles = (item) => {
           <div class="viewport_right">
             <div class="teacher_name"> {{ defaultTeacher.name }} </div>
             <div class="present dian5">{{ defaultTeacher.phrase }}</div>
-            <div class="learn_more">了解详情＞＞</div>
+            <div class="learn_more" @click="handleLecturerDetails" v-if="defaultTeacher.name">了解详情＞＞</div>
             <div class="courseware" v-if="false">
               <div class="courseware-title">相关课件：</div>
               <div class="courseware-box">
@@ -297,17 +334,11 @@ const onClickFiles = (item) => {
       </div>
       <div class="content">
         <div class="swiper-container">
-          <swiper :slides-per-view="3" :space-between="30" :centered-slides="true" :loop="true" navigation
-            class="my-swiper">
-            <swiper-slide v-for="n in productCheckText" :key="n.id"><img :src="n.image"></swiper-slide>
-
-            <!-- 导航按钮 -->
-            <template #navigation-prev>
-              <div class="swiper-button-prev" />
-            </template>
-            <template #navigation-next>
-              <div class="swiper-button-next" />
-            </template>
+          <swiper :modules="[Navigation]" :slides-per-view="3" :space-between="30" :centered-slides="true" :loop="true"
+            navigation class="my-swiper">
+            <swiper-slide v-for="n in productCheckText" :key="n.id" @click="openFile(n)">
+              <img :src="n.image" />
+            </swiper-slide>
           </swiper>
         </div>
         <div class='files_tab'>
@@ -318,7 +349,6 @@ const onClickFiles = (item) => {
         </div>
       </div>
     </div>
-
     <div class="aimingPoint">
       <div class="item" v-for="(item, index) in aimingPointData" :key="index" @click="scrollToSection(item.id)">
         {{ item.name }}
@@ -334,7 +364,7 @@ const onClickFiles = (item) => {
 
   .aimingPoint {
     position: fixed;
-    top: 350px;
+    top: 200px;
     right: 78px;
     z-index: 1000;
 
@@ -350,6 +380,7 @@ const onClickFiles = (item) => {
       background: url('@/assets/images/groupDetails/btn.png') no-repeat;
       background-size: 100% 100%;
       margin-bottom: 30px;
+      cursor: pointer;
     }
   }
 }
@@ -404,6 +435,10 @@ const onClickFiles = (item) => {
   .photo {
     width: 100%;
     height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
   }
 
   .cloud {
@@ -659,6 +694,7 @@ const onClickFiles = (item) => {
           width: 100%;
           text-align: right;
           margin: 16px 0;
+          cursor: pointer;
         }
 
         .courseware {
@@ -878,7 +914,6 @@ const onClickFiles = (item) => {
   }
 }
 
-
 .materials {
   height: 100%;
   position: relative;
@@ -905,23 +940,20 @@ const onClickFiles = (item) => {
     .my-swiper {
       width: 100%;
       height: 100%;
-
     }
 
     .swiper-slide {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      background: #fff;
       height: 740px;
       transform: scale(0.8);
       transition: 300ms;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+      cursor: pointer; // 鼠标悬浮显示手型
       &:hover {
-        transform: scale(1.03) translateY(-10px);
+        transform: scale(1.01) translateY(-5px);
         box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
         z-index: 10;
       }
@@ -929,6 +961,8 @@ const onClickFiles = (item) => {
       img {
         width: 100%;
         height: 100%;
+        object-fit: cover;
+        /* ✅ 防止图片拉伸 */
       }
     }
 
@@ -939,17 +973,29 @@ const onClickFiles = (item) => {
 
     ::v-deep .swiper-button-next,
     ::v-deep .swiper-button-prev {
-      color: #000; // 可选：黑色图标
-      width: 40px;
-      height: 40px;
+      width: 39px;
+      height: 88px;
       top: 50%;
+      position: absolute;
       transform: translateY(-50%);
       z-index: 10;
     }
 
+    ::v-deep .swiper-button-next {
+      right: 0;
+      background: url("@/assets/images/groupDetails/to_right.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+
+    ::v-deep .swiper-button-prev {
+      left: 0;
+      background: url("@/assets/images/groupDetails/to_left.png") no-repeat center;
+      background-size: 100% 100%;
+    }
+
     ::v-deep .swiper-button-next::after,
     ::v-deep .swiper-button-prev::after {
-      font-size: 20px;
+      display: none; // ✅ 隐藏默认箭头
     }
 
     .files_tab {
