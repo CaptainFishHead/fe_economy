@@ -24,10 +24,10 @@ export default defineConfig(({ mode }) => {
       port: 8088,// 开发服务器端口
       proxy: {
         // 代理配置
-        '/dev': {
+        '/api': {
           target: 'http://api.jjxy.hxqxt.com',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/dev/, '')
+          rewrite: path => path.replace(/^\/api/, '')
         }
       }
     },

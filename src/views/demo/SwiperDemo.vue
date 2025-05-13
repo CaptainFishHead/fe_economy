@@ -42,7 +42,7 @@ const openFile = (item: { fileUrl: string; fileType: string }) => {
   const url = item.fileUrl;
   const type = item.fileType;
 
-  // ✅ Office 文档用 Office Online Viewer 打开
+  // ✅ Office 文档用    打开
   const officeTypes = ['word', 'excel', 'ppt'];
   if (officeTypes.includes(type)) {
     const encodedUrl = encodeURIComponent(url);

@@ -263,7 +263,7 @@ const scrollRight = () => {
             box-sizing: border-box;
 
             &.active {
-              background: url('@/assets/images/lecturerDetails/card_active.png') no-repeat;
+              // background: url('@/assets/images/lecturerDetails/card_active.png') no-repeat;
               background-size: cover;
             }
 
@@ -311,7 +311,7 @@ const scrollRight = () => {
           padding-bottom: 55px;
 
           &.active .tab-content {
-            background: url('@/assets/images/active-tab-bg.png') no-repeat center/contain;
+            // background: url('@/assets/images/active-tab-bg.png') no-repeat center/contain;
             color: #fff;
           }
 

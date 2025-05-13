@@ -53,7 +53,7 @@ const selectTab = (index) => {
     position: relative;
 
     &.active .tab-content {
-      background: url('@/assets/images/active-tab-bg.png') no-repeat center/contain;
+     // background: url('@/assets/images/active-tab-bg.png') no-repeat center/contain;
       color: #fff;
     }
 
@@ -89,7 +89,7 @@ const selectTab = (index) => {
       text-align: center;
       font-size: 18px;
       color: #b39258;
-      background: url('@/assets/images/inactive-tab-border.png') no-repeat center/contain;
+      // background: url('@/assets/images/inactive-tab-border.png') no-repeat center/contain;
     }
   }
 }
