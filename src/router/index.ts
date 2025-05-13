@@ -55,6 +55,18 @@ const router = createRouter({
       component: () => import('@/views/platform/index.vue')
     },
     {
+      path: '/lecturerDetails',
+      name: 'lecturerDetails',
+      meta: { title: '讲师详情' },
+      component: () => import('@/views/lecturerDetails/index.vue')
+    },
+    {
+      path: '/teachingStyle',
+      name: 'teachingStyle',
+      meta: { title: '讲师详情' },
+      component: () => import('@/views/teachingStyle/index.vue')
+    },
+    {
       path: '/demo',
       name: 'demo',
       meta: { title: 'demo' },
